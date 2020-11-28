@@ -7,6 +7,8 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Carbon\Carbon;
 use App\User;
+use Illuminate\Support\Str;
+use DB;
 
 class AuthController extends Controller
 {
@@ -27,6 +29,28 @@ class AuthController extends Controller
         return response()->json([
             'message' => 'Successfully created user!'
         ], 201);
+    }
+
+    public function send_reset_pass(Request $request)
+    {
+        # code...
+        $user = User::where('email', $request->email)->first();
+        if ( !$user ) return redirect()->back()->withErrors(['error' => '404']);
+        
+        DB::table('password_resets')->insert([
+            'email' => $request->email,
+            'token' => Str::random(60), 
+            'created_at' => Carbon::now()
+        ]);
+
+        $tokenData = DB::table('password_resets')
+            ->where('email', $request->email)->first();
+
+        $token = $tokenData->token;
+
+        $user->sendPasswordResetNotification($token);
+        
+        return response()->json(['message'=>'Se ha enviado el correo para restablecer su contraseña']);
     }
 
     /**

@@ -18,6 +18,8 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
     return $request->user();
 });
 
+Route::post('/auth/send/reset/password','AuthController@send_reset_pass');
+
 Route::group([
     'prefix' => 'auth'
 ], function () {
@@ -29,5 +31,6 @@ Route::group([
     ], function() {
         Route::get('logout', 'AuthController@logout');
         Route::get('user', 'AuthController@user');
+        Route::resource('products','ProductController');
     });
 });
