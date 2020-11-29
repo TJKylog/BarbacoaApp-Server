@@ -15,6 +15,7 @@ class MesaController extends Controller
     public function index()
     {
         //
+        return response()->json(Mesa::get());
     }
 
     /**
@@ -36,6 +37,11 @@ class MesaController extends Controller
     public function store(Request $request)
     {
         //
+        $request->validate([
+            'name' => 'required|string|max:100'
+        ]);
+
+        return response()->json(Mesa::create($request->all()));
     }
 
     /**
@@ -67,9 +73,18 @@ class MesaController extends Controller
      * @param  \App\Mesa  $mesa
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, Mesa $mesa)
+    public function update(Request $request,$id)
     {
         //
+        $request->validate([
+            'name' => 'required|string|max:100'
+        ]);
+
+        $mesa = Mesa::where('id',$name)->first();
+        $mesa->name = $request->name;
+        $mesa->save();
+
+        return response()->json($mesa);
     }
 
     /**
@@ -81,5 +96,10 @@ class MesaController extends Controller
     public function destroy(Mesa $mesa)
     {
         //
+        $mesa = Mesa::where('id',$name)->first();
+        $name = $request->name;
+        $mesa->delete();
+
+        return response()->json(['message'=> $mesa.' eliminada correctamente']);
     }
 }

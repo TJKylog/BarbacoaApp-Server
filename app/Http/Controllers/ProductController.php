@@ -39,6 +39,12 @@ class ProductController extends Controller
     public function store(Request $request)
     {
         //
+        $request->validate([
+            'name' => 'required|string|max:100',
+            'price' => 'required|between:0,999999.99',
+            'measure' => 'required|string|max:50'
+        ]);
+
         return response()->json(Product::create($request->all()));
     }
 
@@ -74,6 +80,12 @@ class ProductController extends Controller
     public function update(Request $request, $id)
     {
         //
+        $request->validate([
+            'name' => 'required|string|max:100',
+            'price' => 'required|between:0,999999.99',
+            'measure' => 'required|string|max:50'
+        ]);
+
         $product = Product::where('id',$id)->first();
         $product->name = $request->name;
         $product->price = $request->price;
