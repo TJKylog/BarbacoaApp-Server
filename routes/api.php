@@ -14,10 +14,6 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::middleware('auth:api')->get('/user', function (Request $request) {
-    return $request->user();
-});
-
 Route::post('/auth/send/reset/password','AuthController@send_reset_pass');
 
 Route::group([
@@ -33,5 +29,7 @@ Route::group([
         Route::get('user', 'AuthController@user');
         Route::resource('products','ProductController');
         Route::resource('mesas','MesaController');
+        Route::resource('events','EventCotroller');
+        Route::resource('tickets'.'TicketController'); 
     });
 });
