@@ -30,6 +30,6 @@ Route::group([
         Route::resource('products','ProductController');
         Route::resource('mesas','MesaController');
         Route::resource('events','EventCotroller');
-        Route::resource('tickets'.'TicketController'); 
+        Route::resource('tickets','TicketController');
     });
 });
