@@ -29,7 +29,7 @@ Route::group([
         Route::get('user', 'AuthController@user');
         Route::resource('products','ProductController');
         Route::resource('mesas','MesaController');
-        Route::resource('events','EventCotroller');
+        Route::resource('events','EventController');
         Route::resource('tickets','TicketController');
     });
 });

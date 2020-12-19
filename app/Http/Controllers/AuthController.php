@@ -84,8 +84,6 @@ class AuthController extends Controller
             'access_token' => $tokenResult->accessToken,
             'token_type' => 'Bearer',
             'expires_at' => Carbon::parse($token->expires_at)->toDateTimeString(),
-            'user_id' => $user->id,
-            'role' => $user->roles[0]->name,
         ]);
     }
 
@@ -103,8 +101,15 @@ class AuthController extends Controller
     /**
      * Obtener el objeto User como json
      */
-    public function user(Request $request)
+    public function user()
     {
-        return response()->json($request->user()->with('roles'));
+        $user = User::where('id',Auth::user()->id)->with('roles')->first();
+        return response()->json([
+            'id' => $user->id,
+            'name' => $user->name,
+            'email' => $user->email,
+            'role' => $user->roles[0]->name,
+            'role_id' => $user->roles[0]->id
+        ]);
     }
 }
