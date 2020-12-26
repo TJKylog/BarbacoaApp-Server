@@ -14,4 +14,8 @@ class Product extends Model
         'created_at' => 'datetime:Y-m-d H:i:s',
         'updated_at' => 'datetime:Y-m-d H:i:s',
     ];
+
+    protected $hidden = [
+        'created_at', 'updated_at',
+    ];
 }
