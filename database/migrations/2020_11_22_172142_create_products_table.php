@@ -18,6 +18,7 @@ class CreateProductsTable extends Migration
             $table->string('name',100);
             $table->decimal('price',9,2);
             $table->string('measure',50);
+            $table->string('type',50);
             $table->timestamps();
         });
     }
