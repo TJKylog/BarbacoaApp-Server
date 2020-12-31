@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\User;
+use Illuminate\Support\Facades\Hash;
 
 class UserController extends Controller
 {
@@ -65,7 +66,6 @@ class UserController extends Controller
      */
     public function show($id)
     {
-        //
         $user = User::where('id',$id)->with('roles')->first()->makeHidden(['roles','email_verified_at']);
         $user->setAttribute('role', $user->roles[0]->name);
         $user->setAttribute('role_id', $user->roles[0]->id);
