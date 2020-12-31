@@ -31,5 +31,6 @@ Route::group([
         Route::resource('mesas','MesaController');
         Route::resource('events','EventController');
         Route::resource('tickets','TicketController');
+        Route::resource('users', 'UserController');
     });
 });
