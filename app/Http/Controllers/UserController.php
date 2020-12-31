@@ -93,6 +93,19 @@ class UserController extends Controller
     public function update(Request $request, $id)
     {
         //
+        $request->validate([
+            'name' => 'required|string',
+            'email' => 'required|string|email|unique:users',
+            'password' => 'required|string'
+        ]);
+        $user = User::where('id',$id)->first();
+        $user->name = $request->name;
+        $user->email = $request->email;
+        $user->password = Hash::make($request->password);
+        $user->save;
+
+        $user->syncRoles([$request->role]);
+        return response()->json($user);
     }
 
     /**
@@ -104,5 +117,8 @@ class UserController extends Controller
     public function destroy($id)
     {
         //
+        $user = User::where('id',$id)->first();
+        $user->delete();
+        return response()->json(['message' => 'Usuario eliminado']);
     }
 }
