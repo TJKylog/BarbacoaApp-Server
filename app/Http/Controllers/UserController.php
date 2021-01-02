@@ -96,13 +96,15 @@ class UserController extends Controller
         $request->validate([
             'name' => 'required|string',
             'email' => 'required|string|email|unique:users',
-            'password' => 'required|string'
         ]);
         $user = User::where('id',$id)->first();
         $user->name = $request->name;
         $user->email = $request->email;
-        $user->password = Hash::make($request->password);
-        $user->save;
+        if(isset($request->password))
+        {
+            $user->password = Hash::make($request->password);
+        }
+        $user->save();
 
         $user->syncRoles([$request->role]);
         return response()->json($user);
