@@ -111,4 +111,10 @@ class ProductController extends Controller
         $product->delete();
         return response()->json(['message' => $name.' eliminado correctamente']);
     }
+
+    public function get_type_produts()
+    {
+        $type = Product::select('type')->distinct()->get();
+        return $type;
+    }
 }

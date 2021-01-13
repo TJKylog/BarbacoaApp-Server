@@ -95,7 +95,6 @@ class UserController extends Controller
         //
         $request->validate([
             'name' => 'required|string',
-            'email' => 'required|string|email|unique:users',
         ]);
         $user = User::where('id',$id)->first();
         $user->name = $request->name;
