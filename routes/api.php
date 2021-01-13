@@ -33,7 +33,9 @@ Route::group([
         Route::resource('tickets','TicketController');
         Route::resource('users', 'UserController');
         Route::get('types','ProductController@get_type_produts');
+        Route::get('products/type/{type}', 'ProductController@get_products_by_type');
         Route::get('mesas_active','NotesController@get_active');
         Route::get('get/available/info','NotesController@get_available_info');
+        Route::post('add/active','NotesController@add_active');
     });
 });

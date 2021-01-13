@@ -17,12 +17,13 @@ class NotesController extends Controller
             ->get();
     }
 
-    public function add_active(Request $request, $id)
+    public function add_active(Request $request)
     {
-        /* $active = ActiveTables::where()->get();
-        if(isset($active)) {
-            $active->
-        } */
+        $active = ActiveTables::create([
+            'user_id' => $request->user_id,
+            'mesa_id' => $request->mesa_id
+        ]);
+        return $active;
     }
 
     public function get_available_info()

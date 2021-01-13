@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 class ActiveTables extends Model
 {
     protected $fillable = [
-        'mesa_id', 'products',
+        'mesa_id', 'user_id', 'products',
     ];
 
     protected $casts = [
