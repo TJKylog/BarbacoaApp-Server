@@ -32,5 +32,8 @@ Route::group([
         Route::resource('events','EventController');
         Route::resource('tickets','TicketController');
         Route::resource('users', 'UserController');
+        Route::get('types','ProductController@get_type_produts');
+        Route::get('mesas_active','NotesController@get_active');
+        Route::get('get/available/info','NotesController@get_available_info');
     });
 });

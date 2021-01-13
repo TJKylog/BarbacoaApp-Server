@@ -80,10 +80,10 @@ class MesaController extends Controller
             'name' => 'required|string|max:100'
         ]);
 
-        $mesa = Mesa::where('id',$name)->first();
-        $mesa->name = $request->name;
+        $mesa = Mesa::where('id',$id)->first();
+        $mesa->name = $request->id;
         $mesa->save();
-
+ 
         return response()->json($mesa);
     }
 
@@ -93,13 +93,13 @@ class MesaController extends Controller
      * @param  \App\Mesa  $mesa
      * @return \Illuminate\Http\Response
      */
-    public function destroy(Mesa $mesa)
+    public function destroy($id)
     {
         //
-        $mesa = Mesa::where('id',$name)->first();
-        $name = $request->name;
+        $mesa = Mesa::where('id',$id)->first();
+        $name = $mesa->name;
         $mesa->delete();
 
-        return response()->json(['message'=> $mesa.' eliminada correctamente']);
+        return response()->json(['message'=> $name.' eliminada correctamente']);
     }
 }
