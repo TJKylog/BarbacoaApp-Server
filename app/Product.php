@@ -18,4 +18,9 @@ class Product extends Model
     protected $hidden = [
         'created_at', 'updated_at',
     ];
+
+    public function active()
+    {
+        return $this->belongsToMany(ActiveTables::class, 'active_products');
+    }
 }

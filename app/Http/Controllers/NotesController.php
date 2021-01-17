@@ -40,14 +40,18 @@ class NotesController extends Controller
         ]);
     }
 
-    public function add_product()
+    public function update_product(Request $request, $id)
     {
-        
+        $active = ActiveTables::where('mesa_id',$id)->first();
+        $active->products()->attach([$request->product_id => ['amount' => $request->amount]]);
+        return $active;
     }
 
-    public function delete_product()
+    public function delete_product(Request $request, $id)
     {
         
+        $active = ActiveTables::where('mesa_id',$id)->first();
+        $active->products()->dettach([$request->product_id]);
     }
     public function update_unit_product()
     {
