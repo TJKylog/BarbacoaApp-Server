@@ -37,6 +37,6 @@ Route::group([
         Route::get('mesas_active','NotesController@get_active');
         Route::get('get/available/info','NotesController@get_available_info');
         Route::post('add/active','NotesController@add_active');
-        Route::put('');
+        Route::put('mesa/update_product/{id}','NotesController@update_product');
     });
 });

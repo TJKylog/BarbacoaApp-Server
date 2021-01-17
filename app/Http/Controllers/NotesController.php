@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use App\ActiveTables;
 use App\Mesa;
 use App\User;
@@ -30,7 +31,7 @@ class NotesController extends Controller
     {
         $mesas = Mesa::select('mesas.*')
             ->leftJoin('active_tables','active_tables.mesa_id','=','mesas.id')
-            ->where('active_tables.id',NULL)
+            ->where('active_tables.mesa_id',NULL)
             ->get();
         $users = User::select('id','name')->role('normal')->get();
 
@@ -42,19 +43,31 @@ class NotesController extends Controller
 
     public function update_product(Request $request, $id)
     {
+        /*
+            Data request structure
+            {
+                product_id: data,
+                amount: data
+            }
+        */
         $active = ActiveTables::where('mesa_id',$id)->first();
-        $active->products()->attach([$request->product_id => ['amount' => $request->amount]]);
+        if(DB::table('active_products')->where('active_id',$active->mesa_id)->where('product_id',$request->product_id)->first()) {
+            DB::table('active_products')
+                ->where('active_id',$active->mesa_id)
+                ->where('product_id',$request->product_id)
+                ->update([
+                    'amount' => $request->amount
+                ]);
+        } else {
+            $active->products()->attach([$request->product_id => ['amount' => $request->amount]]);
+        }
+        
         return $active;
     }
 
     public function delete_product(Request $request, $id)
     {
-        
         $active = ActiveTables::where('mesa_id',$id)->first();
         $active->products()->dettach([$request->product_id]);
-    }
-    public function update_unit_product()
-    {
-        
     }
 }

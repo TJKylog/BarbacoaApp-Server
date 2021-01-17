@@ -3,6 +3,7 @@
 namespace App;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\DB;
 
 class ActiveTables extends Model
 {
@@ -31,11 +32,11 @@ class ActiveTables extends Model
 
     public function waiter()
     {
-        return $this->belongsTo(User::class);
+        return $this->belongsTo(User::class,'user_id');
     }
 
     public function products()
     {
-        return $this->belongsToMany(Product::class, 'active_products');
+        return $this->belongsToMany(Product::class, 'active_products','active_id');
     }
 }
