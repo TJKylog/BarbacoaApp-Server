@@ -60,7 +60,7 @@ class MesaController extends Controller
         $waiter = User::select('id','name')
             ->join('active_tables','active_tables.user_id','=','users.id')
             ->where('active_tables.mesa_id',$id)
-            ->get();
+            ->first();
         $products =  Product::
                 select('products.id as id','products.name as name','products.measure','products.price','active_products.amount')
                 ->join('active_products','active_products.product_id','=','products.id')
