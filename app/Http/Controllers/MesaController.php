@@ -3,6 +3,9 @@
 namespace App\Http\Controllers;
 
 use App\Mesa;
+use App\Product;
+use App\User;
+use Exception;
 use Illuminate\Http\Request;
 
 class MesaController extends Controller
@@ -50,9 +53,30 @@ class MesaController extends Controller
      * @param  \App\Mesa  $mesa
      * @return \Illuminate\Http\Response
      */
-    public function show(Mesa $mesa)
+    public function show($id)
     {
-        //
+        $total = 0;
+        $mesa = Mesa::where('id',$id)->first();
+        $waiter = User::select('id','name')
+            ->join('active_tables','active_tables.user_id','=','users.id')
+            ->where('active_tables.mesa_id',$id)
+            ->get();
+        $products =  Product::
+                select('products.id as id','products.name as name','products.measure','products.price','active_products.amount')
+                ->join('active_products','active_products.product_id','=','products.id')
+                ->where('active_products.active_id',$id)
+                ->get();
+        
+        foreach($products as $item)
+        {
+            $amount_price = $item->amount * $item->price;
+            $item->setAttribute('amount_price',$amount_price);
+            $total = $total + $amount_price; 
+        }
+        $mesa->setAttribute('waiter',$waiter);
+        $mesa->setAttribute('consumes',$products);
+        $mesa->setAttribute('total',$total);
+        return $mesa;
     }
 
     /**

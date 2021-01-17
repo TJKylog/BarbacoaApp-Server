@@ -3,11 +3,15 @@
 namespace App;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\DB;
 
 class ActiveTables extends Model
 {
+
+    protected $primaryKey = 'mesa_id';
+
     protected $fillable = [
-        'mesa_id', 'products',
+        'mesa_id', 'user_id',
     ];
 
     protected $casts = [
@@ -28,6 +32,11 @@ class ActiveTables extends Model
 
     public function waiter()
     {
-        return $this->belongsTo(User::class);
+        return $this->belongsTo(User::class,'user_id');
+    }
+
+    public function products()
+    {
+        return $this->belongsToMany(Product::class, 'active_products','active_id');
     }
 }

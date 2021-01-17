@@ -14,11 +14,15 @@ class CreateActiveTablesTable extends Migration
     public function up()
     {
         Schema::create('active_tables', function (Blueprint $table) {
-            $table->id();
-            $table->json('products')->nullable();
             $table->foreignId('user_id')->references('id')->on('users')->onDelete('cascade');
             $table->foreignId('mesa_id')->references('id')->on('mesas')->onDelete('cascade')->unique();
             $table->timestamps();
+        });
+
+        Schema::create('active_products', function (Blueprint $table) {
+            $table->foreignId('product_id')->references('id')->on('products')->onDelete('cascade');
+            $table->foreignId('active_id')->references('mesa_id')->on('active_tables')->onDelete('cascade');
+            $table->integer('amount');
         });
     }
 

@@ -117,4 +117,10 @@ class ProductController extends Controller
         $type = Product::select('type')->distinct()->get();
         return $type;
     }
+
+    public function get_products_by_type($type)
+    {
+        $products = Product::where('type',$type)->get();
+        return $products;
+    }
 }

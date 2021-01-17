@@ -19,4 +19,9 @@ class Mesa extends Model
     protected $hidden = [
         'created_at', 'updated_at',
     ];
+
+    public function active()
+    {
+        return $this->hasOne(ActiveTables::class);
+    }
 }
