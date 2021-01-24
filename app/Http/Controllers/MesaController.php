@@ -105,7 +105,7 @@ class MesaController extends Controller
         ]);
 
         $mesa = Mesa::where('id',$id)->first();
-        $mesa->name = $request->id;
+        $mesa->name = $request->name;
         $mesa->save();
  
         return response()->json($mesa);
