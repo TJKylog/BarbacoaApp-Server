@@ -27,6 +27,15 @@ class NotesController extends Controller
         return $active;
     }
 
+    public function delete_active($id)
+    {
+        $active = ActiveTables::where('mesa_id',$id)->first();
+        $active->delete();
+        return response()->json([
+            'message' => 'Mesa borrada'
+        ]);
+    }
+
     public function get_available_info()
     {
         $mesas = Mesa::select('mesas.*')
@@ -68,6 +77,6 @@ class NotesController extends Controller
     public function delete_product(Request $request, $id)
     {
         $active = ActiveTables::where('mesa_id',$id)->first();
-        $active->products()->dettach([$request->product_id]);
+        $active->products()->detach([$request->product_id]);
     }
 }

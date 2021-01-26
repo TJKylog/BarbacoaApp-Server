@@ -22,7 +22,7 @@ class CreateActiveTablesTable extends Migration
         Schema::create('active_products', function (Blueprint $table) {
             $table->foreignId('product_id')->references('id')->on('products')->onDelete('cascade');
             $table->foreignId('active_id')->references('mesa_id')->on('active_tables')->onDelete('cascade');
-            $table->integer('amount');
+            $table->decimal('amount',9,2);
         });
     }
 
