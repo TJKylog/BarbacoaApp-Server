@@ -21,6 +21,6 @@ class Product extends Model
 
     public function active()
     {
-        return $this->belongsToMany(ActiveTables::class, 'active_products');
+        return $this->belongsToMany(ActiveTables::class, 'active_products','product_id');
     }
 }
