@@ -9,6 +9,8 @@ use Carbon\Carbon;
 use App\User;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Mail;
+use App\Mail\ResetPasswordCode;
 
 class AuthController extends Controller
 {
@@ -36,19 +38,16 @@ class AuthController extends Controller
         # code...
         $user = User::where('email', $request->email)->first();
         if ( !$user ) return redirect()->back()->withErrors(['error' => '404']);
+
+        $code = Str::random(10);
         
-        DB::table('password_resets')->insert([
+        DB::table('app_password_resets')->insert([
             'email' => $request->email,
-            'token' => Str::random(60), 
+            'code' => $code, 
             'created_at' => Carbon::now()
         ]);
 
-        $tokenData = DB::table('password_resets')
-            ->where('email', $request->email)->first();
-
-        $token = $tokenData->token;
-
-        $user->sendPasswordResetNotification($token);
+        Mail::to($user->email)->send(new ResetPasswordCode($code));
         
         return response()->json(['message'=>'Se ha enviado el correo para restablecer su contraseña']);
     }
