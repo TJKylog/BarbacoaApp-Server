@@ -40,6 +40,8 @@ class AuthController extends Controller
         if ( !$user ) return redirect()->back()->withErrors(['error' => '404']);
 
         $code = Str::random(10);
+
+        $app_code = DB::table('app_password_resets')->where('email',$request->email)->delete();
         
         DB::table('app_password_resets')->insert([
             'email' => $request->email,
@@ -50,6 +52,33 @@ class AuthController extends Controller
         Mail::to($user->email)->send(new ResetPasswordCode($code));
         
         return response()->json(['message'=>'Se ha enviado el correo para restablecer su contraseña']);
+    }
+    
+    public function code_pass(Request $request)
+    {
+        $app_code = DB::table('app_password_resets')->where('code',$request->code)->first();
+        if( !$app_code )
+            return response()->json(['No exite código']);
+        else
+            return response()->json(['Se encontro el código']);
+    }
+
+    public function change_password(Request $request)
+    {
+        $app_code = DB::table('app_password_resets')->where('email',$request->email)->where('code',$request->code)->first();
+        if($app_code)
+        {
+            if($request->password == $request->repeat_password)
+            {
+                DB::table('users')
+                    ->where('email',$request->email)
+                    ->update([
+                        'password'=> Hash::make($request->password)
+                    ]);
+                DB::table('app_password_resets')->where('email',$request->email)->delete();
+                return response()->json(['Se ha cambiado tu contraseña']);
+            }
+        }
     }
 
     /**
