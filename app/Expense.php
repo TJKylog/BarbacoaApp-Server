@@ -4,14 +4,13 @@ namespace App;
 
 use Illuminate\Database\Eloquent\Model;
 
-class Ticket extends Model
+class Expense extends Model
 {
     protected $fillable = [
-        'purchase_info',
+        'reason','name','amount'
     ];
 
     protected $casts = [
-        'purchase_info' => 'array',
         'created_at' => 'datetime:Y-m-d H:i:s',
         'updated_at' => 'datetime:Y-m-d H:i:s',
     ];
@@ -19,5 +18,4 @@ class Ticket extends Model
     protected $hidden = [
         'updated_at'
     ];
-
 }

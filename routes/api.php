@@ -41,5 +41,7 @@ Route::group([
         Route::delete('delete/active/{id}','NotesController@delete_active');
         Route::put('mesa/update_product/{id}','NotesController@update_product');
         Route::put('mesa/delete_product/{id}','NotesController@delete_product');
+        Route::put('save/ticket/{id}','NotesController@save_ticket');
+        Route::get('day/sales','TicketController@sale_day');
     });
 });
