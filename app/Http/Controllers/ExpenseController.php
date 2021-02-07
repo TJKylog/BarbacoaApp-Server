@@ -2,11 +2,10 @@
 
 namespace App\Http\Controllers;
 
-use App\Ticket;
+use App\Expense;
 use Illuminate\Http\Request;
-use Carbon\Carbon;
 
-class TicketController extends Controller
+class ExpenseController extends Controller
 {
     /**
      * Display a listing of the resource.
@@ -16,7 +15,6 @@ class TicketController extends Controller
     public function index()
     {
         //
-        return response()->json(Ticket::get());
     }
 
     /**
@@ -43,10 +41,10 @@ class TicketController extends Controller
     /**
      * Display the specified resource.
      *
-     * @param  \App\Ticket  $ticket
+     * @param  \App\Expense  $expense
      * @return \Illuminate\Http\Response
      */
-    public function show(Ticket $ticket)
+    public function show(Expense $expense)
     {
         //
     }
@@ -54,10 +52,10 @@ class TicketController extends Controller
     /**
      * Show the form for editing the specified resource.
      *
-     * @param  \App\Ticket  $ticket
+     * @param  \App\Expense  $expense
      * @return \Illuminate\Http\Response
      */
-    public function edit(Ticket $ticket)
+    public function edit(Expense $expense)
     {
         //
     }
@@ -66,10 +64,10 @@ class TicketController extends Controller
      * Update the specified resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @param  \App\Ticket  $ticket
+     * @param  \App\Expense  $expense
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, Ticket $ticket)
+    public function update(Request $request, Expense $expense)
     {
         //
     }
@@ -77,22 +75,11 @@ class TicketController extends Controller
     /**
      * Remove the specified resource from storage.
      *
-     * @param  \App\Ticket  $ticket
+     * @param  \App\Expense  $expense
      * @return \Illuminate\Http\Response
      */
-    public function destroy(Ticket $ticket)
+    public function destroy(Expense $expense)
     {
         //
-    }
-    
-    public function sale_day()
-    {
-        $tickets = Ticket::whereDate('created_at', Carbon::today())->get();
-        $total = 0;
-        foreach($tickets as $ticket)
-        {
-            $total = $total + $ticket->purchase_info['total'];
-        }
-        return response()->json(['total' => $total]);
     }
 }

@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use App\ActiveTables;
+use App\Product;
+use App\Ticket;
 use App\Mesa;
 use App\User;
 
@@ -79,4 +81,41 @@ class NotesController extends Controller
         $active = ActiveTables::where('mesa_id',$id)->first();
         $active->products()->detach([$request->product_id]);
     }
+
+    public function save_ticket(Request $request, $id)
+    {
+        $total = 0;
+        $mesa = Mesa::where('id',$id)->first();
+        $waiter = User::select('id','name')
+            ->join('active_tables','active_tables.user_id','=','users.id')
+            ->where('active_tables.mesa_id',$id)
+            ->first();
+        $products =  Product::
+                select('products.id as id','products.name as name','products.measure','products.price','active_products.amount')
+                ->join('active_products','active_products.product_id','=','products.id')
+                ->where('active_products.active_id',$id)
+                ->get();
+        
+        foreach($products as $item)
+        {
+            $amount_price = $item->amount * $item->price;
+            $item->setAttribute('amount_price',$amount_price);
+            $total = $total + $amount_price; 
+        }
+        $mesa->setAttribute('waiter',$waiter);
+        $mesa->setAttribute('consumes',$products);
+        $mesa->setAttribute('total',$total);
+
+        $mesa->setAttribute('payment',$request->payment);
+        $mesa->setAttribute('change',$request->change);
+
+        $ticket = new Ticket;
+        $ticket->purchase_info = $mesa;
+        $ticket->save();
+
+        $active = ActiveTables::where('mesa_id',$id)->delete();
+        
+        return response()->json(['message' => 'Se guardó correctamente la compra']);
+    }
+
 }
