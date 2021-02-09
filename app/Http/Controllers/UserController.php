@@ -16,7 +16,7 @@ class UserController extends Controller
     public function index()
     {
         //
-        $users = User::with('roles')->get()->makeHidden(['roles','email_verified_at']);
+        $users = User::with('roles')->get();
         foreach($users as $user) {
             $user->setAttribute('role', $user->roles[0]->name);
             $user->setAttribute('role_id', $user->roles[0]->id);
