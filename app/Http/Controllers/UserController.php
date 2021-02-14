@@ -66,7 +66,9 @@ class UserController extends Controller
      */
     public function show($id)
     {
-        $user = User::where('id',$id)->with('roles')->first()->makeHidden(['roles','email_verified_at']);
+        $user = User::where('id',$id)->with('roles','lastname')->first()->makeHidden(['roles','email_verified_at','lastname']);
+        $user->setAttribute('first_lastname',$user->lastname->first_lastname);
+        $user->setAttribute('second_lastname',$user->lastname->second_lastname);
         $user->setAttribute('role', $user->roles[0]->name);
         $user->setAttribute('role_id', $user->roles[0]->id);
         return $user;

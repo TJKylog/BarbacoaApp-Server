@@ -5,6 +5,7 @@ use Spatie\Permission\Models\Role;
 use Spatie\Permission\Models\Permission;
 use App\User;
 use App\Product;
+use App\UserLastname;
 
 class UserSeeder extends Seeder
 {
@@ -25,6 +26,12 @@ class UserSeeder extends Seeder
             'email' => 'adminsarita@appserver.test',
             'email_verified_at' => now(),
             'password' => Hash::make('password'),
+        ]);
+
+        $lastname = UserLastname::create([
+            'user_id' => $user->id,
+            'first_lastname' => "Apellido paterno",
+            'second_lastname' => 'Apellido materno'
         ]);
 
         $user->assignRole('Super admin');
