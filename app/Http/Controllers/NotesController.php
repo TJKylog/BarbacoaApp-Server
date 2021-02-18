@@ -44,7 +44,7 @@ class NotesController extends Controller
             ->leftJoin('active_tables','active_tables.mesa_id','=','mesas.id')
             ->where('active_tables.mesa_id',NULL)
             ->get();
-        $users = User::select('id','name')->role('normal')->get();
+        $users = User::select('id','name')->role('Mesero')->get();
 
         return response()->json([
             'mesas' => $mesas,
