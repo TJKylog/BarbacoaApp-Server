@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 class Expense extends Model
 {
     protected $fillable = [
-        'reason','name','amount'
+        'reason','approved_by','amount','created_by'
     ];
 
     protected $casts = [
@@ -18,4 +18,9 @@ class Expense extends Model
     protected $hidden = [
         'updated_at'
     ];
+
+    public function user()
+    {
+        return $this->belongsTo(User::class,'created_by');
+    }
 }

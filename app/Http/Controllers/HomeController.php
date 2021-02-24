@@ -2,7 +2,9 @@
 
 namespace App\Http\Controllers;
 
+use App\Ticket;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class HomeController extends Controller
 {
@@ -13,7 +15,7 @@ class HomeController extends Controller
      */
     public function __construct()
     {
-        $this->middleware('auth');
+        $this->middleware('auth')->except(['root']);
     }
 
     /**
@@ -23,6 +25,17 @@ class HomeController extends Controller
      */
     public function index()
     {
-        return view('home');
+        $tickets = Ticket::get();
+        return view('home',compact('tickets'));
+    }
+
+    public function root()
+    {
+        if(Auth::check()){
+            return redirect()->route('home');
+        }
+        else{
+            return view('welcome');
+        }
     }
 }
