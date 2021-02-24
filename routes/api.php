@@ -33,6 +33,7 @@ Route::group([
         Route::resource('events','EventController');
         Route::resource('tickets','TicketController');
         Route::resource('users', 'UserController');
+        Route::resource('expenses', 'ExpenseController');
         Route::get('types','ProductController@get_type_produts');
         Route::get('products/type/{type}', 'ProductController@get_products_by_type');
         Route::get('mesas_active','NotesController@get_active');
