@@ -61,16 +61,25 @@ class NotesController extends Controller
                 amount: data
             }
         */
+        $amount = 0;
         $active = ActiveTables::where('mesa_id',$id)->first();
+        $product = Product::where('id',$request->product_id)->first();
+        if(isset($product) && $product->measure == "Gramos")
+        {
+            $amount = $request->amount * 0.001;
+        }
+        else {
+            $amount = $request->amount;
+        }
         if(DB::table('active_products')->where('active_id',$active->mesa_id)->where('product_id',$request->product_id)->first()) {
             DB::table('active_products')
                 ->where('active_id',$active->mesa_id)
                 ->where('product_id',$request->product_id)
                 ->update([
-                    'amount' => $request->amount
+                    'amount' => $amount
                 ]);
         } else {
-            $active->products()->attach([$request->product_id => ['amount' => $request->amount]]);
+            $active->products()->attach([$request->product_id => ['amount' => $amount]]);
         }
         
         return $active;

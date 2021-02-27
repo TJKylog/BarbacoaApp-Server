@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use App\User;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
+use App\UserLastname;
 
 class UserController extends Controller
 {
@@ -95,8 +96,15 @@ class UserController extends Controller
     public function show($id)
     {
         $user = User::where('id',$id)->with('roles','lastname')->first()->makeHidden(['roles','email_verified_at','lastname']);
-        $user->setAttribute('first_lastname',$user->lastname->first_lastname);
-        $user->setAttribute('second_lastname',$user->lastname->second_lastname);
+        if($user->lastname)
+        {
+            $user->setAttribute('first_lastname',$user->lastname->first_lastname);
+            $user->setAttribute('second_lastname',$user->lastname->second_lastname);
+        }
+        else {
+            $user->setAttribute('first_lastname',null);
+            $user->setAttribute('second_lastname',null);
+        }
         $user->setAttribute('role', $user->roles[0]->name);
         $user->setAttribute('role_id', $user->roles[0]->id);
         return $user;
@@ -134,6 +142,21 @@ class UserController extends Controller
             $user->password = Hash::make($request->password);
         }
         $user->save();
+
+        $lastname = UserLastname::where('user_id',$id)->first();
+        if(isset($lastname))
+        {
+            $lastname->first_lastname = $request->first_lastname;
+            $lastname->second_lastname = $request->second_lastname;
+            $lastname->save();
+        }
+        else {
+            UserLastname::create([
+                'user_id' => $user->id,
+                'first_lastname' => $request->first_lastname,
+                'second_lastname' => $request->second_lastname
+            ]);
+        }
 
         $user->syncRoles([$request->role]);
         return response()->json($user);
