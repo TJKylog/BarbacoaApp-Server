@@ -99,6 +99,12 @@ class AuthController extends Controller
             ], 401);
 
         $user = $request->user();
+
+        if($user->hasRole('mesero'))
+            return response()->json([
+                'message' => 'Unauthorized'
+            ], 401);
+
         $tokenResult = $user->createToken('Personal Access Token');
 
         $token = $tokenResult->token;
@@ -131,10 +137,12 @@ class AuthController extends Controller
      */
     public function user()
     {
-        $user = User::where('id',Auth::user()->id)->with('roles')->first();
+        $user = User::where('id',Auth::user()->id)->with('roles','lastname')->first();
         return response()->json([
             'id' => $user->id,
             'name' => $user->name,
+            'first_lastname' => $user->lastname->first_lastname,
+            'second_lastname' => $user->lastname->second_lastname,
             'email' => $user->email,
             'role' => $user->roles[0]->name,
             'role_id' => $user->roles[0]->id

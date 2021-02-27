@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\User;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Str;
 
 class UserController extends Controller
 {
@@ -43,17 +44,44 @@ class UserController extends Controller
     public function store(Request $request)
     {
         //
-        $request->validate([
-            'name' => 'required|string',
-            'email' => 'required|string|email|unique:users',
-            'password' => 'required|string'
-        ]);
+        if($request->role == 'Mesero')
+        {
+            $request->validate([
+                'name' => 'required|string',
+                'email' => 'required|string|email|unique:users'
+            ]);
+            $user = User::create([
+                'name' => $request->name,
+                'email' => $request->email,
+                'password' => Str::random(20)
+            ]);
+        }
+        else {
+            $request->validate([
+                'name' => 'required|string',
+                'email' => 'required|string|email|unique:users',
+                'password' => 'required|string'
+            ]);
+
+            $user = User::create([
+                'name' => $request->name,
+                'email' => $request->email,
+                'password' => Hash::make($request->password)
+            ]);
+        }
 
         $user = User::create([
             'name' => $request->name,
             'email' => $request->email,
             'password' => Hash::make($request->password)
         ]);
+
+        $lastname = UserLastname::create([
+            'user_id' => $user->id,
+            'first_lastname' => $request->first_lastname,
+            'second_lastname' => $request->second_lastname
+        ]);
+
         $user->assignRole($request->role);
         return response()->json($user);
     }
@@ -66,7 +94,9 @@ class UserController extends Controller
      */
     public function show($id)
     {
-        $user = User::where('id',$id)->with('roles')->first()->makeHidden(['roles','email_verified_at']);
+        $user = User::where('id',$id)->with('roles','lastname')->first()->makeHidden(['roles','email_verified_at','lastname']);
+        $user->setAttribute('first_lastname',$user->lastname->first_lastname);
+        $user->setAttribute('second_lastname',$user->lastname->second_lastname);
         $user->setAttribute('role', $user->roles[0]->name);
         $user->setAttribute('role_id', $user->roles[0]->id);
         return $user;

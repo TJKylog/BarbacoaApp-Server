@@ -2,7 +2,13 @@
 
 namespace App\Http\Controllers;
 
+use App\Expense;
+use App\Ticket;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use Barryvdh\DomPDF\Facade as PDF;
+use Illuminate\Support\Facades\View;
+use Carbon\Carbon;
 
 class HomeController extends Controller
 {
@@ -13,7 +19,7 @@ class HomeController extends Controller
      */
     public function __construct()
     {
-        $this->middleware('auth');
+        $this->middleware('auth')->except(['root']);
     }
 
     /**
@@ -21,8 +27,126 @@ class HomeController extends Controller
      *
      * @return \Illuminate\Contracts\Support\Renderable
      */
-    public function index()
+    public function index(Request $request)
     {
-        return view('home');
+        $query = "";
+        if($request->query('day')){
+
+            $expenses = Expense::whereDate('created_at',$request->query('day') )->get();
+            $tickets = Ticket::whereDate('created_at', $request->query('day'))->get();
+            $query = "?day=".$request->query('day');
+        }
+        else if($request->query('month'))
+        {
+            $temp = explode('-',$request->query('month'));
+            $year = $temp[0];
+            $month = $temp[1];
+            $expenses = Expense::whereYear('created_at', '=', $year)
+            ->whereMonth('created_at', '=', $month)->get();
+            $tickets = Ticket::whereYear('created_at', '=', $year)
+            ->whereMonth('created_at', '=', $month)->get();
+            $query = "?month=".$request->query('month');
+        }
+        else if($request->query('year'))
+        {
+            $expenses = Expense::whereYear('created_at', '=', $request->query('year'))->get();
+            $tickets = Ticket::whereYear('created_at', '=', $request->query('year'))->get();
+            $query = "?year=".$request->query('year');
+        }
+        else {
+            $expenses = Expense::whereDate('created_at', Carbon::today())->get();
+            $tickets = Ticket::whereDate('created_at', Carbon::today())->get();
+        }
+
+        $totalCard = 0;
+        $totalCash = 0;
+        $totalExpenses = 0;
+
+        foreach($expenses as $expense) {
+            $totalExpenses = $totalExpenses + $expense->amount;
+        }
+
+        foreach($tickets as $ticket)
+        {
+            if($ticket->purchase_info['payment_method'] == 'Tarjeta')
+            {
+                $totalCard = $totalCard + $ticket->purchase_info['total'];
+            }
+            if($ticket->purchase_info['payment_method'] == 'Efectivo')
+            {
+                $totalCash = $totalCash + $ticket->purchase_info['total'];
+            }
+        }
+
+        return view('home',compact('tickets','totalCard','totalCash','expenses','totalExpenses','query'));
+    }
+
+    public function root()
+    {
+        if(Auth::check()){
+            return redirect()->route('home');
+        }
+        else{
+            return view('welcome');
+        }
+    }
+
+    public function download(Request $request)
+    {
+        $report_name = "";
+        if($request->query('day')){
+
+            $expenses = Expense::whereDate('created_at',$request->query('day') )->get();
+            $tickets = Ticket::whereDate('created_at', $request->query('day'))->get();
+            $report_name = "Reporte ".$request->query('day');
+        }
+        else if($request->query('month'))
+        {
+            $temp = explode('-',$request->query('month'));
+            $year = $temp[0];
+            $month = $temp[1];
+            $expenses = Expense::whereYear('created_at', '=', $year)
+            ->whereMonth('created_at', '=', $month)->get();
+            $tickets = Ticket::whereYear('created_at', '=', $year)
+            ->whereMonth('created_at', '=', $month)->get();
+            $report_name = "Reporte ".$request->query('month');
+        }
+        else if($request->query('year'))
+        {
+            $expenses = Expense::whereYear('created_at', '=', $request->query('year'))->get();
+            $tickets = Ticket::whereYear('created_at', '=', $request->query('year'))->get();
+            $report_name = "Reporte ".$request->query('year');
+        }
+        else {
+            $expenses = Expense::whereDate('created_at', Carbon::today())->get();
+            $tickets = Ticket::whereDate('created_at', Carbon::today())->get();
+            $report_name = "Reporte ".Carbon::today();
+        }
+
+        $totalCard = 0;
+        $totalCash = 0;
+        $totalExpenses = 0;
+
+        foreach($expenses as $expense) {
+            $totalExpenses = $totalExpenses + $expense->amount;
+        }
+
+        foreach($tickets as $ticket)
+        {
+            if($ticket->purchase_info['payment_method'] == 'Tarjeta')
+            {
+                $totalCard = $totalCard + $ticket->purchase_info['total'];
+            }
+            if($ticket->purchase_info['payment_method'] == 'Efectivo')
+            {
+                $totalCash = $totalCash + $ticket->purchase_info['total'];
+            }
+        }
+
+        $view =  View::make('reports.report',compact('tickets','totalCard','totalCash','expenses','totalExpenses'))->render();
+        $pdf = \App::make('dompdf.wrapper');
+
+        return $pdf->loadHTML($view)
+            ->download($report_name.'.pdf');
     }
 }

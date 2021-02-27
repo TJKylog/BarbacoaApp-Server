@@ -17,7 +17,6 @@ class MesaController extends Controller
      */
     public function index()
     {
-        //
         return response()->json(Mesa::get());
     }
 
@@ -28,7 +27,7 @@ class MesaController extends Controller
      */
     public function create()
     {
-        //
+        return;
     }
 
     /**
@@ -70,12 +69,12 @@ class MesaController extends Controller
         foreach($products as $item)
         {
             $amount_price = $item->amount * $item->price;
-            $item->setAttribute('amount_price',$amount_price);
+            $item->setAttribute('amount_price',number_format((float)$amount_price, 2, '.', ''));
             $total = $total + $amount_price; 
         }
         $mesa->setAttribute('waiter',$waiter);
         $mesa->setAttribute('consumes',$products);
-        $mesa->setAttribute('total',$total);
+        $mesa->setAttribute('total',number_format((float)$total, 2, '.', ''));
         return $mesa;
     }
 
@@ -87,7 +86,7 @@ class MesaController extends Controller
      */
     public function edit(Mesa $mesa)
     {
-        //
+        return;
     }
 
     /**

@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Reporte</title>
+    <!-- Styles -->
+    <link href="{{ asset('css/app.css') }}" rel="stylesheet">
+    <!-- Scripts -->
+    <script src="{{ asset('js/app.js') }}" defer></script>
+</head>
+<body style="background-color: #fff">
+    <div class="container-fluid">
+        <div class="row justify-content-center">
+            <div class="col-md-8">
+                <div>
+                    <div class="card-header"> <h4 class="text-center">{{ __('Reportes') }}</h4> </div>
+    
+                    <div class="card-body">
+                        <p><b>Tarjetas:</b> ${{$totalCard}} </p>
+                        <p><b>Efectivo:</b> ${{$totalCash}} </p>
+                        <p><b>Egresos:</b> ${{$totalExpenses}}</p>
+                        <p><b>Venta del día:</b> ${{ $totalCash - ($totalCard + $totalExpenses )}} </p>
+                        <p><b>Total neto:</b> ${{$totalCard + $totalCash}} </p>
+                        <table class="table ">
+                            <caption>Ventas</caption>
+                            <thead>
+                              <tr>
+                                <th scope="col">#</th>
+                                <th scope="col">Atendido por</th>
+                                <th scope="col">Total</th>
+                                <th scope="col">Pago</th>
+                              </tr>
+                            </thead>
+                            <tbody>
+                                @foreach ($tickets as $ticket)
+                                    <tr>
+                                        <td>
+                                            {{$ticket->id}}
+                                        </td>
+                                        <td>
+                                            {{$ticket->purchase_info['waiter']['name']}}
+                                        </td>
+                                        <td>
+                                            ${{$ticket->purchase_info['total']}}
+                                        </td>
+                                        <td>
+                                            {{$ticket->purchase_info['payment_method']}}
+                                        </td>
+                                    </tr>
+                                @endforeach
+                            </tbody>
+                        </table>
+                        <table class="table ">
+                            <caption>Egresos</caption>
+                            <thead>
+                              <tr>
+                                <th scope="col">#</th>
+                                <th scope="col">Autorizo</th>
+                                <th scope="col">Motivo</th>
+                                <th scope="col">Cantidad</th>
+                                <th scope="col">Creado por</th>
+                              </tr>
+                            </thead>
+                            <tbody>
+                                @foreach ($expenses as $expense)
+                                    <tr>
+                                       <td>{{$expense->id}}</td>
+                                       <td>{{$expense->approved_by}}</td>
+                                       <td>{{$expense->reason}}</td>
+                                       <td>{{$expense->amount}}</td>
+                                       <td>{{$expense->user->name}}</td>
+                                    </tr>
+                                @endforeach
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

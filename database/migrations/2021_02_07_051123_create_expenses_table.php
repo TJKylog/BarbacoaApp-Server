@@ -15,6 +15,10 @@ class CreateExpensesTable extends Migration
     {
         Schema::create('expenses', function (Blueprint $table) {
             $table->id();
+            $table->string('approved_by',150);
+            $table->string('reason',255);
+            $table->decimal('amount',9,2);
+            $table->foreignId('created_by')->references('id')->on('users')->onDelete('cascade');
             $table->timestamps();
         });
     }
