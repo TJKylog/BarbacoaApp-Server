@@ -17,8 +17,8 @@ class UserSeeder extends Seeder
     public function run()
     {
         //
-        Role::create(['name' => 'Super admin']);
-        Role::create(['name' => 'Administrator']);
+        Role::create(['name' => 'Super administrador']);
+        Role::create(['name' => 'Administrador']);
         Role::create(['name' => 'Invitado']);
         Role::create(['name' => 'Mesero']);
 
@@ -35,7 +35,7 @@ class UserSeeder extends Seeder
             'second_lastname' => 'Apellido materno'
         ]);
 
-        $user->assignRole('Super admin');
+        $user->assignRole('Super administrador');
 
         $product = Product::create([
             'name'=> 'Dulcesito corazón',

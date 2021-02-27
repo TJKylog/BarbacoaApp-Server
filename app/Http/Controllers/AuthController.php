@@ -99,6 +99,12 @@ class AuthController extends Controller
             ], 401);
 
         $user = $request->user();
+
+        if($user->hasRole('mesero'))
+            return response()->json([
+                'message' => 'Unauthorized'
+            ], 401);
+
         $tokenResult = $user->createToken('Personal Access Token');
 
         $token = $tokenResult->token;
