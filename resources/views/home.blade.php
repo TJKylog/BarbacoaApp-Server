@@ -34,8 +34,8 @@
                 </div>
             </div>
         </div>
-        <div class="col-12 text-center">
-            <a href="{{route('index')}}/report/{{$query}}" target="_blank" rel="noopener noreferrer">descargar pdf</a>
+        <div class="col-12 text-center mb-4">
+            <a href="{{route('index')}}/report{{$query}}" target="_blank" rel="noopener noreferrer">Descargar PDF</a>
         </div>
         <div class="col-md-8">
             <div class="card">
@@ -49,7 +49,7 @@
                     <p><b>Venta del día:</b> ${{ $totalCash - ($totalCard + $totalExpenses )}} </p>
                     <p><b>Total neto:</b> ${{$totalCard + $totalCash}} </p>
 
-                    <ul class="nav nav-pills mb-3" id="pills-tab" role="tablist">
+                    <ul class="nav nav-pills d-flex justify-content-center mb-3" id="pills-tab" role="tablist">
                         <li class="nav-item" role="presentation">
                             <a class="nav-link active" id="pills-sales-tab" data-toggle="pill" href="#pills-sales" role="tab" aria-controls="pills-sales" aria-selected="true">Ventas</a>
                         </li>
