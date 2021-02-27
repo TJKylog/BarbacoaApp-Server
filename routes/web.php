@@ -18,3 +18,5 @@ Route::get('/', 'HomeController@root')->name('index');
 Auth::routes();
 
 Route::get('/home', 'HomeController@index')->name('home');
+
+Route::get('report','HomeController@download');

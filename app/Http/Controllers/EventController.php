@@ -70,7 +70,7 @@ class EventController extends Controller
      * @param  \App\Event  $event
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, Event $event)
+    public function update(Request $request,$id)
     {
         //
         $event = Event::where('id',$id)->first();
@@ -85,11 +85,17 @@ class EventController extends Controller
      * @param  \App\Event  $event
      * @return \Illuminate\Http\Response
      */
-    public function destroy(Event $event)
+    public function destroy($id)
     {
         //
         $event = Event::where('id',$id)->first();
         $event->delete();
         return response()->json(['message' => ' eliminado correctamente']);
     }
+
+    public function save_qoute(Request $request)
+    {
+        
+    }
+
 }

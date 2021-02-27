@@ -101,22 +101,20 @@ class NotesController extends Controller
                 ->join('active_products','active_products.product_id','=','products.id')
                 ->where('active_products.active_id',$id)
                 ->get();
-        if(isset($products)){
-            foreach($products as $item)
-            {
+        if(count($products) >= 1) {
+            foreach($products as $item) {
                 $amount_price = $item->amount * $item->price;
-                $item->setAttribute('amount_price',$amount_price);
+                $item->setAttribute('amount_price',number_format((float)$amount_price, 2, '.', ''));
                 $total = $total + $amount_price; 
             }
 
-            if($request->payment_method == "Tarjeta")
-            {
+            if($request->payment_method == "Tarjeta") {
                 $mesa->setAttribute('waiter',$waiter);
                 $mesa->setAttribute('consumes',$products);
-                $mesa->setAttribute('total',$total);
+                $mesa->setAttribute('total',number_format((float)$total, 2, '.', ''));
 
                 $mesa->setAttribute('payment_method',$request->payment_method);
-                $mesa->setAttribute('payment',$total);
+                $mesa->setAttribute('payment',number_format((float)$total, 2, '.', ''));
                 $mesa->setAttribute('change',0);
 
                 
@@ -136,7 +134,7 @@ class NotesController extends Controller
 
                     $mesa->setAttribute('waiter',$waiter);
                     $mesa->setAttribute('consumes',$products);
-                    $mesa->setAttribute('total',$total);
+                    $mesa->setAttribute('total',number_format((float)$total, 2, '.', ''));
 
                     $mesa->setAttribute('payment_method',$request->payment_method);
                     $mesa->setAttribute('payment',$request->payment);
@@ -162,7 +160,5 @@ class NotesController extends Controller
         else {
             return response()->json(['message' => 'La mesa no tiene productos']);
         }
-        
     }
-
 }
