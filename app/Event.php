@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 class Event extends Model
 {
     protected $fillable = [
-        'status', 'event_info',
+        'is_conplete', 'event_info',
     ];
 
     protected $casts = [
