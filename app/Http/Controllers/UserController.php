@@ -71,12 +71,6 @@ class UserController extends Controller
             ]);
         }
 
-        $user = User::create([
-            'name' => $request->name,
-            'email' => $request->email,
-            'password' => Hash::make($request->password)
-        ]);
-
         $lastname = UserLastname::create([
             'user_id' => $user->id,
             'first_lastname' => $request->first_lastname,
