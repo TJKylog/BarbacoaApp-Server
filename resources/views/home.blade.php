@@ -67,6 +67,7 @@
                                   <tr>
                                     <th scope="col">#</th>
                                     <th scope="col">Atendido por</th>
+                                    <th scope="col">Consumo</th>
                                     <th scope="col">Total</th>
                                     <th scope="col">Pago</th>
                                   </tr>
@@ -79,6 +80,39 @@
                                             </td>
                                             <td>
                                                 {{$ticket->purchase_info['waiter']['name']}}
+                                            </td>
+                                            <td>
+                                                <table>
+                                                    <thead>
+                                                        <tr>
+                                                          <th scope="col">Producto</th>
+                                                          <th scope="col">Catidad</th>
+                                                          <th scope="col">Total</th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                        @foreach ($ticket->purchase_info['consumes'] as $item)
+                                                            <tr>
+                                                                <td>
+                                                                    {{$item['name']}}
+                                                                </td>
+                                                                <td>
+                                                                    @if(($item['measure'] == "Gramos") || $item['measure'] == "gramos")
+                                                                        {{$item['amount'] * 1000 }} {{$item['measure'] }}
+                                                                    @elseif($item['measure'] == "Dulcesito corazón")
+                                                                        {{$item['amount']}}
+                                                                    @else
+                                                                        {{$item['amount']}} {{$item['measure'] }}
+                                                                    @endif
+                                                                    
+                                                                </td>
+                                                                <td>
+                                                                    {{$item['amount_price']}}
+                                                                </td>
+                                                            </tr>
+                                                        @endforeach
+                                                    </tbody>
+                                                </table>
                                             </td>
                                             <td>
                                                 ${{$ticket->purchase_info['total']}}
