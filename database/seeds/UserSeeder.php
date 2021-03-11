@@ -5,6 +5,7 @@ use Spatie\Permission\Models\Role;
 use Spatie\Permission\Models\Permission;
 use App\User;
 use App\Product;
+use App\InvoiceCount;
 use App\UserLastname;
 
 class UserSeeder extends Seeder
@@ -42,6 +43,9 @@ class UserSeeder extends Seeder
             'measure' => 'Dulcesito corazón',
             'price' => 1,
             'type' => 'Dulcesito corazón'
+        ]);
+        $invoice = InvoiceCount::create([
+            'invoice_count' => 1
         ]);
     }
 }

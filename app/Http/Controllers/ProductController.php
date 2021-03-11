@@ -40,9 +40,10 @@ class ProductController extends Controller
     {
         //
         $request->validate([
-            'name' => 'required|string|max:100',
+            'name' => 'unique:products|required|string|max:100',
             'price' => 'required|between:0,999999.99',
-            'measure' => 'required|string|max:50'
+            'measure' => 'required|string|max:50',
+            'type' => 'required|string|max:50'
         ]);
 
         return response()->json(Product::create($request->all()));

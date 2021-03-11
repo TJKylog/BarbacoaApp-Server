@@ -5,10 +5,12 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use App\ActiveTables;
+use App\InvoiceCount;
 use App\Product;
 use App\Ticket;
 use App\Mesa;
 use App\User;
+use Carbon\Carbon;
 
 class NotesController extends Controller
 {
@@ -22,10 +24,34 @@ class NotesController extends Controller
 
     public function add_active(Request $request)
     {
+        $count = 1;
+        $invoice = InvoiceCount::whereDate( 'updated_at' , Carbon::today())->first();
+        
+        if(isset($invoice))
+        {
+            if($invoice->invoice_count <= 100 )
+            {
+                $count = $invoice->invoice_count;
+                $invoice->invoice_count = $invoice->invoice_count + 1;
+            }
+            else {
+                $invoice->invoice_count = 1;
+            }
+        }
+        else{
+            $invoice = InvoiceCount::where('id',1)->first();
+            $invoice->invoice_count = 1;
+        }
+
         $active = ActiveTables::create([
             'user_id' => $request->user_id,
-            'mesa_id' => $request->mesa_id
+            'mesa_id' => $request->mesa_id,
+            'delivery' => $request->delivery,
+            'invoice' => $count
         ]);
+
+        $invoice->save();
+
         return $active;
     }
 
@@ -100,7 +126,9 @@ class NotesController extends Controller
         ]);
 
         $total = 0;
-        $mesa = Mesa::where('id',$id)->first();
+        $mesa = Mesa::where('id',$id)->with('active')->first()->makeHidden(['active']);
+        $mesa->setAttribute('delivery',$mesa->active->delivery);
+        $mesa->setAttribute('invoice',$mesa->active->invoice);
         $waiter = User::select('id','name')
             ->join('active_tables','active_tables.user_id','=','users.id')
             ->where('active_tables.mesa_id',$id)

@@ -11,11 +11,12 @@ class ActiveTables extends Model
     protected $primaryKey = 'mesa_id';
 
     protected $fillable = [
-        'mesa_id', 'user_id',
+        'mesa_id', 'user_id','invoice','delivery'
     ];
 
     protected $casts = [
         'products' => 'array',
+        'delivery' => 'boolean',
         'created_at' => 'datetime:Y-m-d H:i:s',
         'updated_at' => 'datetime:Y-m-d H:i:s',
     ];

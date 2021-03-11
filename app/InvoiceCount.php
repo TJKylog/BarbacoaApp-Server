@@ -4,16 +4,18 @@ namespace App;
 
 use Illuminate\Database\Eloquent\Model;
 
-class Event extends Model
+class InvoiceCount extends Model
 {
     protected $fillable = [
-        'is_completed', 'event_info',
+        'invoice_count',
     ];
-
+    
     protected $casts = [
-        'is_completed' => 'boolean',
-        'event_info' => 'array',
         'created_at' => 'datetime:Y-m-d H:i:s',
         'updated_at' => 'datetime:Y-m-d H:i:s',
+    ];
+
+    protected $hidden = [
+        'created_at', 'updated_at',
     ];
 }
