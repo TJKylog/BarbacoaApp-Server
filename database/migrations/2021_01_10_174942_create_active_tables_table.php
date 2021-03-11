@@ -15,8 +15,11 @@ class CreateActiveTablesTable extends Migration
     {
         Schema::create('active_tables', function (Blueprint $table) {
             $table->foreignId('user_id')->references('id')->on('users')->onDelete('cascade');
-            $table->foreignId('mesa_id')->references('id')->on('mesas')->onDelete('cascade')->unique();
+            $table->foreignId('mesa_id')->references('id')->on('mesas')->onDelete('cascade');
+            $table->boolean('delivery')->default(0);
+            $table->integer('invoice')->default(1);
             $table->timestamps();
+            $table->unique("mesa_id");
         });
 
         Schema::create('active_products', function (Blueprint $table) {

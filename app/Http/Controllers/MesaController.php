@@ -40,7 +40,7 @@ class MesaController extends Controller
     {
         //
         $request->validate([
-            'name' => 'required|string|max:100'
+            'name' => 'required|unique:mesas|string|max:100'
         ]);
 
         return response()->json(Mesa::create($request->all()));
@@ -55,7 +55,10 @@ class MesaController extends Controller
     public function show($id)
     {
         $total = 0;
-        $mesa = Mesa::where('id',$id)->first();
+        $mesa = Mesa::where('id',$id)->with('active')
+            ->first()->makeHidden(['active']);
+        $mesa->setAttribute('delivery',$mesa->active->delivery);
+        $mesa->setAttribute('invoice',$mesa->active->invoice);
         $waiter = User::select('id','name')
             ->join('active_tables','active_tables.user_id','=','users.id')
             ->where('active_tables.mesa_id',$id)
@@ -100,7 +103,7 @@ class MesaController extends Controller
     {
         //
         $request->validate([
-            'name' => 'required|string|max:100'
+            'name' => 'required|unique:mesas|string|max:100'
         ]);
 
         $mesa = Mesa::where('id',$id)->first();
