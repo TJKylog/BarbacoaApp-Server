@@ -142,6 +142,7 @@ class HomeController extends Controller
         $totalCard = 0;
         $totalCash = 0;
         $totalExpenses = 0;
+        $totalEvents = 0;
 
         foreach($expenses as $expense) {
             $totalExpenses = $totalExpenses + $expense->amount;
@@ -159,7 +160,11 @@ class HomeController extends Controller
             }
         }
 
-        $view =  View::make('reports.report',compact('tickets','totalCard','totalCash','expenses','totalExpenses'))->render();
+        foreach($events as $event){
+            $totalEvents = $totalEvents + $event->event_info['total'];
+        }
+
+        $view =  View::make('reports.report',compact('tickets','totalCard','totalCash','expenses','totalExpenses','events','totalEvents'))->render();
         $pdf = \App::make('dompdf.wrapper');
 
         return $pdf->loadHTML($view)
