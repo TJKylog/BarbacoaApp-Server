@@ -38,7 +38,7 @@
             <a href="{{route('index')}}/report{{$query}}" target="_blank" rel="noopener noreferrer">Descargar PDF</a>
         </div>
         <div class="col-md-8">
-            <div class="card">*
+            <div class="card">
                 <div class="card-header"> <h4 class="text-center">{{ __('Reportes') }}</h4> </div>
 
                 <div class="card-body">
@@ -66,6 +66,7 @@
                                 <thead>
                                   <tr>
                                     <th scope="col">#</th>
+                                    <th scope="col">Lugar</th>
                                     <th scope="col">Atendido por</th>
                                     <th scope="col">Consumo</th>
                                     <th scope="col">Total</th>
@@ -76,7 +77,14 @@
                                     @foreach ($tickets as $ticket)
                                         <tr>
                                             <td>
-                                                {{$ticket->id}}
+                                                {{$ticket->id}} - Folio {{$ticket->purchase_info['invoice']}}
+                                            </td>
+                                            <td>
+                                                @if ($ticket->purchase_info['delivery'])
+                                                    Domicilio
+                                                @else
+                                                    Comedor
+                                                @endif
                                             </td>
                                             <td>
                                                 {{$ticket->purchase_info['waiter']['name']}}
