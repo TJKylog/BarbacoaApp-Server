@@ -38,7 +38,7 @@
             <a href="{{route('index')}}/report{{$query}}" target="_blank" rel="noopener noreferrer">Descargar PDF</a>
         </div>
         <div class="col-md-8">
-            <div class="card">*
+            <div class="card">
                 <div class="card-header"> <h4 class="text-center">{{ __('Reportes') }}</h4> </div>
 
                 <div class="card-body">
@@ -46,7 +46,8 @@
                     <p><b>Tarjetas:</b> ${{$totalCard}} </p>
                     <p><b>Efectivo:</b> ${{$totalCash}} </p>
                     <p><b>Egresos:</b> ${{$totalExpenses}}</p>
-                    <p><b>Venta del día:</b> ${{ $totalCash - ($totalCard + $totalExpenses )}} </p>
+                    <p><b>Eventos:</b> ${{$totalEvents}}</p>
+                    <p><b>Venta del día:</b> ${{ ($totalCard + $totalCash) - ($totalExpenses + $totalCard) }} </p>
                     <p><b>Total neto:</b> ${{$totalCard + $totalCash}} </p>
 
                     <ul class="nav nav-pills d-flex justify-content-center mb-3" id="pills-tab" role="tablist">
@@ -66,6 +67,7 @@
                                 <thead>
                                   <tr>
                                     <th scope="col">#</th>
+                                    <th scope="col">Lugar</th>
                                     <th scope="col">Atendido por</th>
                                     <th scope="col">Consumo</th>
                                     <th scope="col">Total</th>
@@ -76,7 +78,14 @@
                                     @foreach ($tickets as $ticket)
                                         <tr>
                                             <td>
-                                                {{$ticket->id}}
+                                                {{$ticket->id}} - Folio {{$ticket->purchase_info['invoice']}}
+                                            </td>
+                                            <td>
+                                                @if ($ticket->purchase_info['delivery'])
+                                                    Domicilio
+                                                @else
+                                                    Comedor
+                                                @endif
                                             </td>
                                             <td>
                                                 {{$ticket->purchase_info['waiter']['name']}}
@@ -151,7 +160,69 @@
                                 </tbody>
                             </table>
                         </div>
-                        <div class="tab-pane fade" id="pills-contact" role="tabpanel" aria-labelledby="pills-contact-tab">...</div>
+                        <div class="tab-pane fade" id="pills-contact" role="tabpanel" aria-labelledby="pills-contact-tab">
+                            <table class="table ">
+                                <caption>Eventos</caption>
+                                <thead>
+                                  <tr>
+                                    <th scope="col">#</th>
+                                    <th scope="col">Total</th>
+                                    <th scope="col">Productos</th>
+                                    <th scope="col">Fecha</th>
+                                  </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach ($events as $event)
+                                        <tr>
+                                           <td>{{$event->id}}</td>
+                                           <td>{{$event->event_info['total']}}</td>
+                                           <td>
+                                            <div class="col">
+                                                <table class="table">
+                                                    <thead>
+                                                        <tr>
+                                                        <th scope="col">Producto</th>
+                                                        <th scope="col">Catidad</th>
+                                                        <th scope="col">Total</th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                        @foreach ($event->event_info['basic_package'] as $item)
+                                                            <tr>
+                                                                <td>
+                                                                    {{$item['name']}}
+                                                                </td>
+                                                                <td>
+                                                                    {{$item['amount']}}
+                                                                </td>
+                                                                <td>
+                                                                    $ {{$item['price']}}
+                                                                </td>
+                                                            </tr>
+                                                        @endforeach
+                                                        @foreach ($event->event_info['extras_list'] as $item)
+                                                        <tr>
+                                                            <td>
+                                                                {{$item['name']}}
+                                                            </td>
+                                                            <td>
+                                                                {{$item['amount']}}
+                                                            </td>
+                                                            <td>
+                                                                $ {{$item['price']}}
+                                                            </td>
+                                                        </tr>
+                                                    @endforeach
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                           </td>
+                                           <td>{{$event->event_info['date']}}</td>
+                                        </tr>
+                                    @endforeach
+                                </tbody>
+                            </table>
+                        </div>
                     </div>
                 </div>
             </div>

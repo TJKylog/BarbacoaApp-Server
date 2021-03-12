@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Event;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class EventController extends Controller
 {
@@ -38,7 +39,13 @@ class EventController extends Controller
     public function store(Request $request)
     {
         //
-        return response()->json(Event::create($request->all()));
+        $event =  Event::create($request->all());
+        if($request->event_info['total'] == $request->event_info['advance_payment'])
+        {
+            DB::table('events')->where('id', $event->id)->update(['is_completed' => true ]);
+        }
+
+        return response()->json($event);
     }
 
     /**
@@ -47,9 +54,10 @@ class EventController extends Controller
      * @param  \App\Event  $event
      * @return \Illuminate\Http\Response
      */
-    public function show(Event $event)
+    public function show($id)
     {
-        //
+        $event = Event::where('id',$id)->first();
+        return response()->json($event);
     }
 
     /**
@@ -73,7 +81,16 @@ class EventController extends Controller
     public function update(Request $request,$id)
     {
         //
+        
         $event = Event::where('id',$id)->first();
+        $event->event_info = $request->event_info;
+        if($request->event_info['total'] == $request->event_info['advance_payment'])
+        {
+            $event->is_completed = true;
+        }
+        else{
+            $event->is_completed = true;
+        }
         $event->save();
 
         return response()->json($event);
@@ -92,10 +109,4 @@ class EventController extends Controller
         $event->delete();
         return response()->json(['message' => ' eliminado correctamente']);
     }
-
-    public function save_qoute(Request $request)
-    {
-        
-    }
-
 }
