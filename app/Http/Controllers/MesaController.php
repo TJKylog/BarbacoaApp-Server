@@ -57,8 +57,11 @@ class MesaController extends Controller
         $total = 0;
         $mesa = Mesa::where('id',$id)->with('active')
             ->first()->makeHidden(['active']);
-        $mesa->setAttribute('delivery',$mesa->active->delivery);
-        $mesa->setAttribute('invoice',$mesa->active->invoice);
+        if(isset($mesa->active))
+        {
+            $mesa->setAttribute('delivery',$mesa->active->delivery);
+            $mesa->setAttribute('invoice',$mesa->active->invoice);
+        }
         $waiter = User::select('id','name')
             ->join('active_tables','active_tables.user_id','=','users.id')
             ->where('active_tables.mesa_id',$id)
@@ -87,9 +90,9 @@ class MesaController extends Controller
      * @param  \App\Mesa  $mesa
      * @return \Illuminate\Http\Response
      */
-    public function edit(Mesa $mesa)
+    public function edit($id)
     {
-        return;
+        return Mesa::where('id',$id)->first();
     }
 
     /**
