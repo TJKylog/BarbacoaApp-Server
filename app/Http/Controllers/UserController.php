@@ -18,11 +18,15 @@ class UserController extends Controller
     public function index()
     {
         //
-        $users = User::with('roles')->get();
+        $users = User::with('lastname','roles')->get();
         foreach($users as $user) {
             $user->setAttribute('role', $user->roles[0]->name);
             $user->setAttribute('role_id', $user->roles[0]->id);
+            if(isset($user->lastname)) {
+                $user->name = $user->name.' '.$user->lastname->first_lastname.' '.$user->lastname->second_lastname;
+            }
         }
+
         return response()->json($users);
     }
 

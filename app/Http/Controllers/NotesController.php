@@ -19,6 +19,7 @@ class NotesController extends Controller
     {
         return Mesa::select('mesas.*')
             ->join('active_tables','active_tables.mesa_id','=','mesas.id')
+            ->orderBy('name')
             ->get();
     }
 
@@ -70,7 +71,12 @@ class NotesController extends Controller
             ->leftJoin('active_tables','active_tables.mesa_id','=','mesas.id')
             ->where('active_tables.mesa_id',NULL)
             ->get();
-        $users = User::select('id','name')->role('Mesero')->get();
+        $users = User::select('id','name')->with('lastname')->role('Mesero')->get()->makeHidden(['lastname']);
+        foreach($users as $user) {
+            if(isset($user->lastname)) {
+                $user->name = $user->name.' '.$user->lastname->first_lastname.' '.$user->lastname->second_lastname;
+            }
+        }
 
         return response()->json([
             'mesas' => $mesas,
