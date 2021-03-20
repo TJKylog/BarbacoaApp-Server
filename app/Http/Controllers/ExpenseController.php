@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Expense;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Carbon\Carbon;
 
 class ExpenseController extends Controller
 {
@@ -46,6 +47,8 @@ class ExpenseController extends Controller
             'reason' => 'required|string|max:255',
             'amount' => 'required|between:0,99999.99',
         ]);
+
+
 
         $expense = Expense::create([
             'approved_by' => $request->approved_by,
@@ -95,6 +98,31 @@ class ExpenseController extends Controller
             'reason' => 'required|string|max:255',
             'amount' => 'required|between:0,99999.99',
         ]);
+
+        /* $expenses = Expense::whereDate('created_at', Carbon::today())->get();
+        $tickets = Ticket::whereDate('created_at', Carbon::today())->get();
+        $events = Event::whereDate('created_at', Carbon::today())->where('is_completed',true)->get();
+
+
+        $totalCash = 0;
+        $totalExpenses = 0;
+        $totalEvents = 0;
+
+        foreach($expenses as $expense) {
+            $totalExpenses = $totalExpenses + $expense->amount;
+        }
+
+        foreach($tickets as $ticket)
+        {
+            if($ticket->purchase_info['payment_method'] == 'Efectivo')
+            {
+                $totalCash = $totalCash + $ticket->purchase_info['total'];
+            }
+        }
+
+        foreach($events as $event){
+            $totalEvents = $totalEvents + $event->event_info['advance_payment'];
+        } */
 
         $expense = Expense::where('id',$id)->first();
         $expense->approved_by = $request->approved_by;

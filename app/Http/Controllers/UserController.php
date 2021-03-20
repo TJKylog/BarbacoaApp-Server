@@ -18,11 +18,27 @@ class UserController extends Controller
     public function index()
     {
         //
-        $users = User::with('roles')->get();
+        $users = User::with('lastname','roles')->get();
         foreach($users as $user) {
             $user->setAttribute('role', $user->roles[0]->name);
             $user->setAttribute('role_id', $user->roles[0]->id);
+            if(isset($user->lastname)) {
+                $user->name = $user->name.' '.$user->lastname->first_lastname.' '.$user->lastname->second_lastname;
+            }
         }
+
+        return response()->json($users);
+    }
+
+    public function user_names()
+    {
+        $users = User::with('lastname')->get()->makeHidden('lastname');
+        foreach($users as $user) {
+            if(isset($user->lastname)) {
+                $user->name = $user->name.' '.$user->lastname->first_lastname.' '.$user->lastname->second_lastname;
+            }
+        }
+
         return response()->json($users);
     }
 
@@ -79,6 +95,8 @@ class UserController extends Controller
 
         $user->assignRole($request->role);
         return response()->json($user);
+
+
     }
 
     /**
@@ -125,35 +143,42 @@ class UserController extends Controller
     public function update(Request $request, $id)
     {
         //
-        $request->validate([
-            'name' => 'required|string',
-        ]);
-        $user = User::where('id',$id)->first();
-        $user->name = $request->name;
-        $user->email = $request->email;
-        if(isset($request->password))
-        {
-            $user->password = Hash::make($request->password);
-        }
-        $user->save();
-
-        $lastname = UserLastname::where('user_id',$id)->first();
-        if(isset($lastname))
-        {
-            $lastname->first_lastname = $request->first_lastname;
-            $lastname->second_lastname = $request->second_lastname;
-            $lastname->save();
-        }
-        else {
-            UserLastname::create([
-                'user_id' => $user->id,
-                'first_lastname' => $request->first_lastname,
-                'second_lastname' => $request->second_lastname
+        try{
+            $request->validate([
+                'name' => 'required|string',
             ]);
+            $user = User::where('id',$id)->first();
+            $user->name = $request->name;
+            $user->email = $request->email;
+            if(isset($request->password))
+            {
+                $user->password = Hash::make($request->password);
+            }
+            $user->save();
+    
+            $lastname = UserLastname::where('user_id',$id)->first();
+            if(isset($lastname))
+            {
+                $lastname->first_lastname = $request->first_lastname;
+                $lastname->second_lastname = $request->second_lastname;
+                $lastname->save();
+            }
+            else {
+                UserLastname::create([
+                    'user_id' => $user->id,
+                    'first_lastname' => $request->first_lastname,
+                    'second_lastname' => $request->second_lastname
+                ]);
+            }
+    
+            $user->syncRoles([$request->role]);
+            return response()->json(['message'=>'Se actualizo el usuario correctamente'],200);
         }
-
-        $user->syncRoles([$request->role]);
-        return response()->json($user);
+        catch (Exception $e){
+            if($e->getCode() == 23000) {
+                return response()->json(['message'=>'El correo ya existe'],401);
+            }
+        }
     }
 
     /**

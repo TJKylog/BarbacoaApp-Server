@@ -121,7 +121,21 @@ class ProductController extends Controller
 
     public function get_products_by_type($type)
     {
-        $products = Product::where('type',$type)->get();
+        $products = Product::where('type',$type)->orderBy('name')->get();
         return $products;
+    }
+    
+    public function validate_name(Request $request)
+    {
+        $request->validate([
+            'name' => 'required|string|max:100'
+        ]);
+
+        $product = Product::where('name',$request->name)->first();
+
+        if(isset($product))
+            return response()->json([ 'exist' => true]);
+        else
+            return response()->json([ 'exist' => false]);
     }
 }

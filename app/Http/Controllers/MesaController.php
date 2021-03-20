@@ -17,7 +17,7 @@ class MesaController extends Controller
      */
     public function index()
     {
-        return response()->json(Mesa::get());
+        return response()->json(Mesa::orderBy('name')->get());
     }
 
     /**
@@ -106,7 +106,7 @@ class MesaController extends Controller
     {
         //
         $request->validate([
-            'name' => 'required|unique:mesas|string|max:100'
+            'name' => 'required|string|max:100'
         ]);
 
         $mesa = Mesa::where('id',$id)->first();
