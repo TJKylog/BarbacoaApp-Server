@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Expense;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Carbon\Carbon;
 
 class ExpenseController extends Controller
 {
@@ -98,7 +99,7 @@ class ExpenseController extends Controller
             'amount' => 'required|between:0,99999.99',
         ]);
 
-        $expenses = Expense::whereDate('created_at', Carbon::today())->get();
+        /* $expenses = Expense::whereDate('created_at', Carbon::today())->get();
         $tickets = Ticket::whereDate('created_at', Carbon::today())->get();
         $events = Event::whereDate('created_at', Carbon::today())->where('is_completed',true)->get();
 
@@ -121,7 +122,7 @@ class ExpenseController extends Controller
 
         foreach($events as $event){
             $totalEvents = $totalEvents + $event->event_info['advance_payment'];
-        }
+        } */
 
         $expense = Expense::where('id',$id)->first();
         $expense->approved_by = $request->approved_by;

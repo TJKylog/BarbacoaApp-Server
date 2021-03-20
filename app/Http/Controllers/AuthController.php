@@ -37,7 +37,9 @@ class AuthController extends Controller
     {
         # code...
         $user = User::where('email', $request->email)->first();
-        if ( !$user ) return redirect()->back()->withErrors(['error' => '404']);
+        if ( !$user ) return response()->json(['message' => 'el correo no existe'],404);
+
+        if($user->hasRole('Mesero')) return response()->json(['message' => 'No tienes permitido restablecer contraseña'],403);
 
         $code = Str::random(10);
 
@@ -51,7 +53,7 @@ class AuthController extends Controller
 
         Mail::to($user->email)->send(new ResetPasswordCode($code));
         
-        return response()->json(['message'=>'Se ha enviado el correo para restablecer su contraseña']);
+        return response()->json(['message'=>'Se ha enviado el correo para restablecer su contraseña'],200);
     }
     
     public function code_pass(Request $request)
@@ -76,7 +78,7 @@ class AuthController extends Controller
                         'password'=> Hash::make($request->password)
                     ]);
                 DB::table('app_password_resets')->where('email',$request->email)->delete();
-                return response()->json(['Se ha cambiado tu contraseña']);
+                return response()->json(['Se ha cambiado tu contraseña'],200);
             }
         }
     }
@@ -95,15 +97,15 @@ class AuthController extends Controller
 
         if (!Auth::attempt($credentials))
             return response()->json([
-                'message' => 'Unauthorized'
+                'message' => 'Correo o contraseña incorrectos'
             ], 401);
 
         $user = $request->user();
 
-        if($user->hasRole('mesero'))
+        if($user->hasRole('Mesero'))
             return response()->json([
-                'message' => 'Unauthorized'
-            ], 401);
+                'message' => 'No tienes permiso para entrar a la app'
+            ], 402);
 
         $tokenResult = $user->createToken('Personal Access Token');
 

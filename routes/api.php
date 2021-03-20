@@ -45,5 +45,6 @@ Route::group([
         Route::put('save/ticket/{id}','NotesController@save_ticket');
         Route::get('day/sales','TicketController@sale_day');
         Route::post('verify/name', 'ProductController@validate_name');
+        Route::get('get_names', 'UserController@user_names');
     });
 });

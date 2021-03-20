@@ -121,7 +121,7 @@ class ProductController extends Controller
 
     public function get_products_by_type($type)
     {
-        $products = Product::where('type',$type)->get();
+        $products = Product::where('type',$type)->orderBy('name')->get();
         return $products;
     }
     
