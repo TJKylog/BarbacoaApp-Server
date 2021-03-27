@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Ticket;
+use App\Expense;
 use Illuminate\Http\Request;
 use Carbon\Carbon;
 
@@ -87,12 +88,25 @@ class TicketController extends Controller
     
     public function sale_day()
     {
+        $expenses = Expense::whereDate('created_at', Carbon::today())->get();
         $tickets = Ticket::whereDate('created_at', Carbon::today())->get();
-        $total = 0;
+        $totalCard = 0;
+        $totalCash = 0;
+        $totalExpenses = 0;
+        foreach($expenses as $expense) {
+            $totalExpenses = $totalExpenses + $expense->amount;
+        }
         foreach($tickets as $ticket)
         {
-            $total = $total + $ticket->purchase_info['total'];
+            if($ticket->purchase_info['payment_method'] == 'Tarjeta')
+            {
+                $totalCard = $totalCard + $ticket->purchase_info['total'];
+            }
+            if($ticket->purchase_info['payment_method'] == 'Efectivo')
+            {
+                $totalCash = $totalCash + $ticket->purchase_info['total'];
+            }
         }
-        return response()->json(['total' => $total]);
+        return response()->json(['total' => ($totalCash-$totalExpenses) ]);
     }
 }
