@@ -187,19 +187,6 @@
                                                         </tr>
                                                     </thead>
                                                     <tbody>
-                                                        @foreach ($event->event_info['basic_package'] as $item)
-                                                            <tr>
-                                                                <td>
-                                                                    {{$item['name']}}
-                                                                </td>
-                                                                <td>
-                                                                    {{$item['amount']}}
-                                                                </td>
-                                                                <td>
-                                                                    $ {{$item['price']}}
-                                                                </td>
-                                                            </tr>
-                                                        @endforeach
                                                         @foreach ($event->event_info['extras_list'] as $item)
                                                         <tr>
                                                             <td>
