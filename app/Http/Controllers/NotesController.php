@@ -25,12 +25,10 @@ class NotesController extends Controller
 
     public function add_active(Request $request)
     {
-        $count = 1;
         $active = ActiveTables::create([
             'user_id' => $request->user_id,
             'mesa_id' => $request->mesa_id,
-            'delivery' => $request->delivery,
-            'invoice' => $count
+            'delivery' => $request->delivery
         ]);
 
         return $active;
@@ -103,8 +101,73 @@ class NotesController extends Controller
         $active->products()->detach([$request->product_id]);
     }
 
+    public function set_invoice_note($id)
+    {
+        $active = ActiveTables::where('mesa_id',$id)->first();
+        if($active->invoice == -1) {
+
+            $count = 1;
+            $invoice = InvoiceCount::whereDate( 'updated_at' , Carbon::today())->first();
+            if(isset($invoice))
+            {
+                if($invoice->invoice_count <= 100 )
+                {
+                    $count = $invoice->invoice_count;
+                    $invoice->invoice_count = $invoice->invoice_count + 1;
+                }
+                else {
+                    $invoice->invoice_count = 1;
+                }
+            }
+            else{
+                $invoice = InvoiceCount::where('id',1)->first();
+                $invoice->invoice_count = 2;
+            }
+            $invoice->save();
+
+            ActiveTables::where('mesa_id',$id)->update([
+                'invoice' => $count
+            ]);
+
+        }
+
+        $total = 0;
+        $mesa = Mesa::where('id',$id)->with('active')
+            ->first()->makeHidden(['active']);
+        if(isset($mesa->active))
+        {
+            $mesa->setAttribute('delivery',$mesa->active->delivery);
+            $mesa->setAttribute('invoice',$mesa->active->invoice);
+        }
+        $waiter = User::select('id','name')
+            ->join('active_tables','active_tables.user_id','=','users.id')
+            ->where('active_tables.mesa_id',$id)
+            ->first();
+        $products =  Product::
+                select('products.id as id','products.name as name','products.measure','products.price','active_products.amount')
+                ->join('active_products','active_products.product_id','=','products.id')
+                ->where('active_products.active_id',$id)
+                ->get();
+        
+        foreach($products as $item)
+        {
+            $amount_price = $item->amount * $item->price;
+            $item->setAttribute('amount_price',number_format((float)$amount_price, 2, '.', ''));
+            $total = $total + $amount_price; 
+        }
+        $mesa->setAttribute('waiter',$waiter);
+        $mesa->setAttribute('consumes',$products);
+        $mesa->setAttribute('total',number_format((float)$total, 2, '.', ''));
+        return $mesa;
+
+    }
+
     public function save_ticket(Request $request, $id)
     {
+        $active = ActiveTables::where('mesa_id',$id)->first();
+        if($active->invoice == -1) {
+            return response()->json(['message' => 'Aun no tiene folio'],403);   
+        }
 
         $request->validate([
             'payment' => 'required|between:0,99999.99',
@@ -131,27 +194,9 @@ class NotesController extends Controller
             }
 
             if($request->payment_method == "Tarjeta") {
-                $count = 1;
-                $invoice = InvoiceCount::whereDate( 'updated_at' , Carbon::today())->first();
-                if(isset($invoice))
-                {
-                    if($invoice->invoice_count <= 100 )
-                    {
-                        $count = $invoice->invoice_count;
-                        $invoice->invoice_count = $invoice->invoice_count + 1;
-                    }
-                    else {
-                        $invoice->invoice_count = 1;
-                    }
-                }
-                else{
-                    $invoice = InvoiceCount::where('id',1)->first();
-                    $invoice->invoice_count = 2;
-                }
-                $invoice->save();
-
+                
                 $mesa->setAttribute('waiter',$waiter);
-                $mesa->setAttribute('invoice',$count);
+                $mesa->setAttribute('invoice',$mesa->active->invoice);
                 $mesa->setAttribute('consumes',$products);
                 $mesa->setAttribute('total',number_format((float)$total, 2, '.', ''));
 
@@ -159,49 +204,29 @@ class NotesController extends Controller
                 $mesa->setAttribute('payment',number_format((float)$total, 2, '.', ''));
                 $mesa->setAttribute('change',0);
 
-                
                 $ticket = new Ticket;
                 $ticket->purchase_info = $mesa;
                 $ticket->save();
 
                 $active = ActiveTables::where('mesa_id',$id)->delete();
 
-                return response()->json(['message' => 'Se guardó correctamente la compra','invoice' => $count],200);
+                return response()->json(['message' => 'Se guardó correctamente la compra','invoice' => $mesa->active->invoice],200);
             }
             else if($request->payment_method == "Efectivo") {
 
                 if($request->payment >= $total)
                 {
-                    $count = 1;
-                    $invoice = InvoiceCount::whereDate( 'updated_at' , Carbon::today())->first();
-                    if(isset($invoice))
-                    {
-                        if($invoice->invoice_count <= 100 )
-                        {
-                            $count = $invoice->invoice_count;
-                            $invoice->invoice_count = $invoice->invoice_count + 1;
-                        }
-                        else {
-                            $invoice->invoice_count = 1;
-                        }
-                    }
-                    else{
-                        $invoice = InvoiceCount::where('id',1)->first();
-                        $invoice->invoice_count = 2;
-                    }
-                    $invoice->save();
 
                     $change = $request->payment -$total;
 
                     $mesa->setAttribute('waiter',$waiter);
-                    $mesa->setAttribute('invoice',$count);
+                    $mesa->setAttribute('invoice',$mesa->active->invoice);
                     $mesa->setAttribute('consumes',$products);
                     $mesa->setAttribute('total',number_format((float)$total, 2, '.', ''));
 
                     $mesa->setAttribute('payment_method',$request->payment_method);
                     $mesa->setAttribute('payment',$request->payment);
                     $mesa->setAttribute('change',$change);
-
                     
                     $ticket = new Ticket;
                     $ticket->purchase_info = $mesa;
@@ -209,7 +234,7 @@ class NotesController extends Controller
 
                     $active = ActiveTables::where('mesa_id',$id)->delete();
 
-                    return response()->json(['message' => 'Se guardó correctamente la compra','invoice' => $count],200);
+                    return response()->json(['message' => 'Se guardó correctamente la compra','invoice' => $mesa->active->invoice],200);
                 }
                 else {
                     return response()->json(['message' => 'El pago no es sufiente para pagar el ticket'],401);
