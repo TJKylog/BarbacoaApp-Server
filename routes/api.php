@@ -46,5 +46,6 @@ Route::group([
         Route::get('day/sales','TicketController@sale_day');
         Route::post('verify/name', 'ProductController@validate_name');
         Route::get('get_names', 'UserController@user_names');
+        Route::get('set/invoice/{id}','NotesController@set_invoice_note');
     });
 });
