@@ -17,7 +17,7 @@ class CreateActiveTablesTable extends Migration
             $table->foreignId('user_id')->references('id')->on('users')->onDelete('cascade');
             $table->foreignId('mesa_id')->references('id')->on('mesas')->onDelete('cascade');
             $table->boolean('delivery')->default(0);
-            $table->integer('invoice')->default(1);
+            $table->integer('invoice')->default(-1);
             $table->timestamps();
             $table->unique("mesa_id");
         });
