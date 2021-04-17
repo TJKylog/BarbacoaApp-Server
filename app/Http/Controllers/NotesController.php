@@ -116,7 +116,7 @@ class NotesController extends Controller
                     $invoice->invoice_count = $invoice->invoice_count + 1;
                 }
                 else {
-                    $invoice->invoice_count = 1;
+                    $invoice->invoice_count = 2;
                 }
             }
             else{
