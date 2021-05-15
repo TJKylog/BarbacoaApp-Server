@@ -12,7 +12,7 @@ use Carbon\Carbon;
 class ExpenseController extends Controller
 {
     /**
-     * Display a listing of the resource.
+     * Se evian todos los egresos
      *
      * @return \Illuminate\Http\Response
      */
@@ -26,7 +26,7 @@ class ExpenseController extends Controller
     }
 
     /**
-     * Show the form for creating a new resource.
+     * 
      *
      * @return \Illuminate\Http\Response
      */
@@ -36,20 +36,21 @@ class ExpenseController extends Controller
     }
 
     /**
-     * Store a newly created resource in storage.
+     * Se guarga un nuevo 
      *
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
     public function store(Request $request)
     {
-        //
+        //se validan los datos del usuario
         $request->validate([
             'approved_by' => 'required|string|max:150',
             'reason' => 'required|string|max:255',
             'amount' => 'required|between:0,99999.99',
         ]);
 
+        //se obtienes todos los egresos, tickets y enventos para hacer la validación
         $expenses = Expense::whereDate('created_at', Carbon::today())->get();
         $tickets = Ticket::whereDate('created_at', Carbon::today())->get();
         $events = Event::whereDate('created_at', Carbon::today())->where('is_completed',true)->get();
@@ -81,7 +82,7 @@ class ExpenseController extends Controller
         {
             return response()->json([
                 "message" => "El egreso debe ser menor a $ ".number_format((float)$sales_day, 2, '.', '')
-            ],200);
+            ],200);// si el egreso es mayor a la venta del día se mandara un mensaje de que no debe ser menor a la catidad dada
         }
         else {
             $expense = Expense::create([
@@ -89,16 +90,16 @@ class ExpenseController extends Controller
                 'reason' => $request->reason,
                 'amount' => $request->amount,
                 'created_by' => Auth::user()->id
-            ]);
+            ]);// se crea el egreso
 
             return response()->json([
                 "message" => "Se guardo correctamente el egreso "
-            ],200);
+            ],200); // se envia un mensaje de que el egreso de guardo correctamente
         }
     }
 
     /**
-     * Display the specified resource.
+     * Se obtiene los datos del egreso encontrado
      *
      * @param  \App\Expense  $expense
      * @return \Illuminate\Http\Response
@@ -122,7 +123,7 @@ class ExpenseController extends Controller
     }
 
     /**
-     * Update the specified resource in storage.
+     * Se actualizan los datos de un egreso.
      *
      * @param  \Illuminate\Http\Request  $request
      * @param  \App\Expense  $expense
@@ -134,7 +135,9 @@ class ExpenseController extends Controller
             'approved_by' => 'required|string|max:150',
             'reason' => 'required|string|max:255',
             'amount' => 'required|between:0,99999.99',
-        ]);
+        ]);//se validan los datos
+
+        //se obtienen todos los egresos, tickets y eventos para hacer la validación de la venta del día
 
         $expenses = Expense::whereDate('created_at', Carbon::today())->get();
         $tickets = Ticket::whereDate('created_at', Carbon::today())->get();
@@ -174,25 +177,25 @@ class ExpenseController extends Controller
             $expense->approved_by = $request->approved_by;
             $expense->reason = $request->reason;
             $expense->amount = $request->amount;
-            $expense->save();
+            $expense->save();//se guardan los datos ingresados por el usuario
 
             return response()->json([
                 "message" => "Se guardo correctamente el egreso "
-            ],200);
+            ],200);//manda mensaje de que el egreso se guardo correctamente
         }
     }
 
     /**
-     * Remove the specified resource from storage.
+     * Se elimina un egreso.
      *
      * @param  \App\Expense  $expense
      * @return \Illuminate\Http\Response
      */
     public function destroy($id)
     {
-        //
+        //se busca el egreso
         $expense = Expense::where('id',$id)->with('user')->first();
-        $expense->delete();
-        return response()->json(['message' => 'Egreso eliminado']);
+        $expense->delete();//se borra el egreso
+        return response()->json(['message' => 'Egreso eliminado']);//se envia un mensaje de egreso eliminado
     }
 }

@@ -9,11 +9,11 @@ use Illuminate\Support\Facades\DB;
 class EventController extends Controller
 {
     /**
-     * Display a listing of the resource.
+     * Función que consulta todos los eventos en la BD y los envia en formato JSON.
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index() /* Se envian todos los eventos */
     {
         //
         $events = Event::get();
@@ -31,7 +31,7 @@ class EventController extends Controller
     }
 
     /**
-     * Store a newly created resource in storage.
+     * Guarda un nuevo evento y retorna el evento creado en formato JSON.
      *
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
@@ -49,7 +49,7 @@ class EventController extends Controller
     }
 
     /**
-     * Display the specified resource.
+     * Buscar en la base el id del evento y retorna con formato JSON.
      *
      * @param  \App\Event  $event
      * @return \Illuminate\Http\Response
@@ -72,7 +72,7 @@ class EventController extends Controller
     }
 
     /**
-     * Update the specified resource in storage.
+     * Fucion para hacer actualizacion de datos de un evento.
      *
      * @param  \Illuminate\Http\Request  $request
      * @param  \App\Event  $event
@@ -89,7 +89,7 @@ class EventController extends Controller
             $event->is_completed = true;
         }
         else{
-            $event->is_completed = true;
+            $event->is_completed = false;
         }
         $event->save();
 
@@ -97,7 +97,7 @@ class EventController extends Controller
     }
 
     /**
-     * Remove the specified resource from storage.
+     * Elimina un evento.
      *
      * @param  \App\Event  $event
      * @return \Illuminate\Http\Response

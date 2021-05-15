@@ -11,7 +11,7 @@ use Illuminate\Http\Request;
 class MesaController extends Controller
 {
     /**
-     * Display a listing of the resource.
+     * Se envian todas las mesas ordenados por nombre.
      *
      * @return \Illuminate\Http\Response
      */
@@ -31,7 +31,7 @@ class MesaController extends Controller
     }
 
     /**
-     * Store a newly created resource in storage.
+     * Se guarda la mesa.
      *
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
@@ -40,14 +40,14 @@ class MesaController extends Controller
     {
         //
         $request->validate([
-            'name' => 'required|unique:mesas|string|max:100'
+            'name' => 'required|unique:mesas|string|max:100'// se valida el nombre de la mesa se unico
         ]);
 
         return response()->json(Mesa::create($request->all()));
     }
 
     /**
-     * Display the specified resource.
+     * Se envian los datos de la mesa activa con los articulos, mesero y el total del consumo.
      *
      * @param  \App\Mesa  $mesa
      * @return \Illuminate\Http\Response
@@ -56,21 +56,21 @@ class MesaController extends Controller
     {
         $total = 0;
         $mesa = Mesa::where('id',$id)->with('active')
-            ->first()->makeHidden(['active']);
+            ->first()->makeHidden(['active']);//busca si la mesa esta activa
         if(isset($mesa->active))
         {
-            $mesa->setAttribute('delivery',$mesa->active->delivery);
-            $mesa->setAttribute('invoice',$mesa->active->invoice);
+            $mesa->setAttribute('delivery',$mesa->active->delivery);//Se añade la variable que sirve  para identificar si es para llevar o para comedor
+            $mesa->setAttribute('invoice',$mesa->active->invoice);//Se añade la variable que sirve para identificar si ya tiene un folio asignado
         }
         $waiter = User::select('id','name')
             ->join('active_tables','active_tables.user_id','=','users.id')
             ->where('active_tables.mesa_id',$id)
-            ->first();
+            ->first();//
         $products =  Product::
                 select('products.id as id','products.name as name','products.measure','products.price','active_products.amount')
                 ->join('active_products','active_products.product_id','=','products.id')
                 ->where('active_products.active_id',$id)
-                ->get();
+                ->get();//
         
         foreach($products as $item)
         {
@@ -78,25 +78,25 @@ class MesaController extends Controller
             $item->setAttribute('amount_price',number_format((float)$amount_price, 2, '.', ''));
             $total = $total + $amount_price; 
         }
-        $mesa->setAttribute('waiter',$waiter);
-        $mesa->setAttribute('consumes',$products);
+        $mesa->setAttribute('waiter',$waiter);// se añade el id y el nombre del mesero
+        $mesa->setAttribute('consumes',$products);// se añade el id, nombre, precio , catidad consumida de cada producto
         $mesa->setAttribute('total',number_format((float)$total, 2, '.', ''));
         return $mesa;
     }
 
     /**
-     * Show the form for editing the specified resource.
+     * Se obtiene la mesa que se desea editar
      *
      * @param  \App\Mesa  $mesa
      * @return \Illuminate\Http\Response
      */
     public function edit($id)
     {
-        return Mesa::where('id',$id)->first();
+        return Mesa::where('id',$id)->first();//
     }
 
     /**
-     * Update the specified resource in storage.
+     * Se actualiza una mesa
      *
      * @param  \Illuminate\Http\Request  $request
      * @param  \App\Mesa  $mesa
@@ -117,7 +117,7 @@ class MesaController extends Controller
     }
 
     /**
-     * Remove the specified resource from storage.
+     * Elimina una mesa
      *
      * @param  \App\Mesa  $mesa
      * @return \Illuminate\Http\Response

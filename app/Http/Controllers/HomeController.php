@@ -11,6 +11,9 @@ use Barryvdh\DomPDF\Facade as PDF;
 use Illuminate\Support\Facades\View;
 use Carbon\Carbon;
 
+/*  Este controlador solo sirve para mostara la pag. de los reportes (/resources/views/home.blade.php),
+    si estas logueado te va mostrar los reportes y si no te mandar a la pag. principal  (/resources/views/welcome.blade.php)
+*/
 class HomeController extends Controller
 {
     /**
@@ -20,7 +23,7 @@ class HomeController extends Controller
      */
     public function __construct()
     {
-        $this->middleware('auth')->except(['root']);
+        $this->middleware('auth')->except(['root']);//protege todos las funciones del controlador exepto la funcion root de usuarios que no han iniciado sesión
     }
 
     /**
@@ -31,14 +34,14 @@ class HomeController extends Controller
     public function index(Request $request)
     {
         $query = "";
-        if($request->query('day')){
+        if($request->query('day')){ //si existe la variable day en la url se va a buscar los reportes por día
 
             $expenses = Expense::whereDate('created_at',$request->query('day') )->get();
             $tickets = Ticket::whereDate('created_at', $request->query('day'))->get();
             $events = Event::whereDate('created_at', $request->query('day'))->where('is_completed',true)->get();
             $query = "?day=".$request->query('day');
         }
-        else if($request->query('month'))
+        else if($request->query('month')) //si existe la variable month en la url se va a buscar los reportes por mes
         {
             $temp = explode('-',$request->query('month'));
             $year = $temp[0];
@@ -51,14 +54,14 @@ class HomeController extends Controller
             ->whereMonth('created_at', '=', $month)->where('is_completed',true)->get();
             $query = "?month=".$request->query('month');
         }
-        else if($request->query('year'))
+        else if($request->query('year'))//si existe la variable año en la url se va a buscar los reportes por año
         {
             $expenses = Expense::whereYear('created_at', '=', $request->query('year'))->get();
             $tickets = Ticket::whereYear('created_at', '=', $request->query('year'))->get();
             $events = Event::whereYear('created_at', '=', $request->query('year'))->where('is_completed',true)->get();
             $query = "?year=".$request->query('year');
         }
-        else {
+        else {//si no existe ninugno de las variables anteriores en la url se va a buscar los reportes del día de hoy
             $expenses = Expense::whereDate('created_at', Carbon::today())->get();
             $tickets = Ticket::whereDate('created_at', Carbon::today())->get();
             $events = Event::whereDate('created_at', Carbon::today())->where('is_completed',true)->get();
@@ -102,7 +105,7 @@ class HomeController extends Controller
         }
     }
 
-    public function download(Request $request)
+    public function download(Request $request)// funcion que genera los reportes
     {
         $report_name = "";
         if($request->query('day')){
@@ -168,6 +171,6 @@ class HomeController extends Controller
         $pdf = \App::make('dompdf.wrapper');
 
         return $pdf->loadHTML($view)
-            ->download($report_name.'.pdf');
+            ->download($report_name.'.pdf'); // se crea el pdf
     }
 }
