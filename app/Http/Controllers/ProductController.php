@@ -8,7 +8,7 @@ use Illuminate\Http\Request;
 class ProductController extends Controller
 {
     /**
-     * Display a listing of the resource.
+     * Envia todos los productos
      *
      * @return \Illuminate\Http\Response
      */
@@ -31,7 +31,7 @@ class ProductController extends Controller
     }
 
     /**
-     * Store a newly created resource in storage.
+     * Guarda un nuevo producto.
      *
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
@@ -50,7 +50,7 @@ class ProductController extends Controller
     }
 
     /**
-     * Display the specified resource.
+     * Envia los datos de un producto.
      *
      * @param  \App\Product  $product
      * @return \Illuminate\Http\Response
@@ -72,7 +72,7 @@ class ProductController extends Controller
     }
 
     /**
-     * Update the specified resource in storage.
+     * Actualiza los datos de un producto
      *
      * @param  \Illuminate\Http\Request  $request
      * @param  \App\Product  $product
@@ -99,7 +99,7 @@ class ProductController extends Controller
     }
 
     /**
-     * Remove the specified resource from storage.
+     * Elimina un producto.
      *
      * @param  \App\Product  $product
      * @return \Illuminate\Http\Response
@@ -113,18 +113,21 @@ class ProductController extends Controller
         return response()->json(['message' => $name.' eliminado correctamente']);
     }
 
+    /* Envia los tipos de productos */
     public function get_type_produts()
     {
         $type = Product::select('type')->distinct()->get();
         return $type;
     }
 
+    /* Envia los productos por el tipo */
     public function get_products_by_type($type)
     {
         $products = Product::where('type',$type)->orderBy('name')->get();
         return $products;
     }
     
+    /* valida el nombre del producto */
     public function validate_name(Request $request)
     {
         $request->validate([

@@ -8,13 +8,13 @@ use Illuminate\Support\Facades\DB;
 class ActiveTables extends Model
 {
 
-    protected $primaryKey = 'mesa_id';
+    protected $primaryKey = 'mesa_id';//llave primaria
 
     protected $fillable = [
-        'mesa_id', 'user_id','invoice','delivery'
+        'mesa_id', 'user_id','invoice','delivery'//datos requeridos debe introducir el ususario
     ];
 
-    protected $casts = [
+    protected $casts = [ //conversion de datos
         'products' => 'array',
         'delivery' => 'boolean',
         'created_at' => 'datetime:Y-m-d H:i:s',
@@ -22,10 +22,11 @@ class ActiveTables extends Model
     ];
     
 
-    protected $hidden = [
+    protected $hidden = [ //no se envian o muestran estos datos
         'created_at', 'updated_at',
     ];
 
+    //relaciones con otros modelos
     public function mesa()
     {
         return $this->belongsTo(Mesa::class);

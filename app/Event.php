@@ -12,7 +12,7 @@ class Event extends Model
 
     protected $casts = [
         'is_completed' => 'boolean',
-        'event_info' => 'array',
+        'event_info' => 'array',//se guarda la info del evento
         'created_at' => 'datetime:Y-m-d H:i:s',
         'updated_at' => 'datetime:Y-m-d H:i:s',
     ];

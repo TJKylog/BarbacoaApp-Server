@@ -10,7 +10,7 @@ use Carbon\Carbon;
 class TicketController extends Controller
 {
     /**
-     * Display a listing of the resource.
+     * Envia todos tickets
      *
      * @return \Illuminate\Http\Response
      */
@@ -86,6 +86,7 @@ class TicketController extends Controller
         //
     }
     
+    /* Venta del día */
     public function sale_day()
     {
         $expenses = Expense::whereDate('created_at', Carbon::today())->get();

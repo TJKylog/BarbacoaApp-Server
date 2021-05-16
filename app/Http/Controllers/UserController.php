@@ -11,7 +11,7 @@ use App\UserLastname;
 class UserController extends Controller
 {
     /**
-     * Display a listing of the resource.
+     * Envia todos los usuarios con su apellidos y su rol.
      *
      * @return \Illuminate\Http\Response
      */
@@ -53,7 +53,7 @@ class UserController extends Controller
     }
 
     /**
-     * Store a newly created resource in storage.
+     * Guarda un nuevo usuario, si rol es mesero se le generara una contraseña aleatoria
      *
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
@@ -100,7 +100,7 @@ class UserController extends Controller
     }
 
     /**
-     * Display the specified resource.
+     * Envia datos los datos del usuario apellidos, nombre y rol
      *
      * @param  int  $id
      * @return \Illuminate\Http\Response
@@ -134,7 +134,7 @@ class UserController extends Controller
     }
 
     /**
-     * Update the specified resource in storage.
+     * Actualiza los datos de un usuario.
      *
      * @param  \Illuminate\Http\Request  $request
      * @param  int  $id
@@ -182,7 +182,7 @@ class UserController extends Controller
     }
 
     /**
-     * Remove the specified resource from storage.
+     * Elimina un usuario.
      *
      * @param  int  $id
      * @return \Illuminate\Http\Response

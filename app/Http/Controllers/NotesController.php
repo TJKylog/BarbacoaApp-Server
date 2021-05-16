@@ -14,7 +14,7 @@ use Carbon\Carbon;
 
 class NotesController extends Controller
 {
-    //
+    // se envian las mesas que estan ocupadas
     public function get_active()
     {
         return Mesa::select('mesas.*')
@@ -23,6 +23,7 @@ class NotesController extends Controller
             ->get();
     }
 
+    /* Se añade una mesa ocupada */
     public function add_active(Request $request)
     {
         $active = ActiveTables::create([
@@ -34,6 +35,7 @@ class NotesController extends Controller
         return $active;
     }
 
+    /* Borra una mesa ocupada */
     public function delete_active($id)
     {
         $active = ActiveTables::where('mesa_id',$id)->first();
@@ -43,6 +45,7 @@ class NotesController extends Controller
         ]);
     }
 
+    /* Se envian las mesas disponibles y los meseros */
     public function get_available_info()
     {
         $mesas = Mesa::select('mesas.*')
@@ -62,6 +65,7 @@ class NotesController extends Controller
         ]);
     }
 
+    /* Se actualiza la cantidad consumida de un articulo o añade un articulo a una mesa activa */
     public function update_product(Request $request, $id)
     {
         /*
@@ -81,6 +85,8 @@ class NotesController extends Controller
         else {
             $amount = $request->amount;
         }
+
+        //si ya existe el articulo en el consumo de la mesa son actualiza la catidad
         if(DB::table('active_products')->where('active_id',$active->mesa_id)->where('product_id',$request->product_id)->first()) {
             DB::table('active_products')
                 ->where('active_id',$active->mesa_id)
@@ -95,12 +101,14 @@ class NotesController extends Controller
         return $active;
     }
 
+    /* Elimina un articulo consumido de una mesa */
     public function delete_product(Request $request, $id)
     {
         $active = ActiveTables::where('mesa_id',$id)->first();
         $active->products()->detach([$request->product_id]);
     }
 
+    /* Fija un folio a una mesa activa y envia el consumo y el mesero que atiende */
     public function set_invoice_note($id)
     {
         $active = ActiveTables::where('mesa_id',$id)->first();
@@ -162,6 +170,7 @@ class NotesController extends Controller
 
     }
 
+    /* Se guarda el ticket con el metodo de pago, folio, consumo, total pagado, mesero que atendio y el cambio */
     public function save_ticket(Request $request, $id)
     {
         $active = ActiveTables::where('mesa_id',$id)->first();
